@@ -10,11 +10,13 @@
 #include <QCommandLineOption>
 #include <QLabel>
 
+/** Makes QString printable */
 auto operator<<(std::ostream& os, QString const& str) -> std::ostream&
 {
     return os << str.toStdString();
 }
 
+/** Makes QVariant printable */
 auto operator<<(std::ostream& os, QVariant const& var) -> std::ostream&
 {
     if(var.type() == QMetaType::QString)
