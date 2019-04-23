@@ -211,6 +211,12 @@ public:
                                   Qt::KeepAspectRatio));
     }
 
+    QString GetSelectedFile() const
+    {
+        QModelIndex index = tree->selectionModel()->currentIndex();
+        return  model->filePath(index);
+    }
+
 
 };
 
