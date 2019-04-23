@@ -65,6 +65,8 @@ private:
         model->setNameFilters(filters);
         tree->setModel(model);
 
+        currentFile->setBackgroundRole(QPalette::Base);
+
         // Demonstrating look and feel features
         tree->setAnimated(false);
         tree->setIndentation(20);
@@ -92,13 +94,28 @@ private:
         vbox->addLayout(buttonPanel);
         vbox->addLayout(hbox);
 
-        this->setLayout(hbox);
+        // this->setLayout(hbox);
         this->setCentralWidget(new QWidget);
         this->centralWidget()->setLayout(vbox);
         this->setMinimumHeight(500);
         this->setMinimumWidth(650);
        // this->resize(QDesktopWidget().availableGeometry(window).size() * 0.7);
         // this->showNormal();
+
+        //=========== Set Menus ============//
+
+        auto openAct = new QAction(tr("&Open..."), this);
+        openAct->setShortcut(tr("Ctrl+O"));
+        fileMenu->addAction(openAct);
+
+        QMenuBar* bar = new QMenuBar;
+        vbox->setMenuBar(bar);
+        bar->addMenu(fileMenu);
+        bar->setVisible(true);
+        bar->setNativeMenuBar(true);
+        bar->show();
+    }
+
     }
     void SetEvents()
     {
