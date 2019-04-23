@@ -134,7 +134,8 @@ public:
         return *this;
     }
 
-    ImageViewer(QString path = "/")
+
+    explicit ImageViewer(QString path = QDir::homePath())
     {
         this->setWindowTitle("Sample QT5 Image Viewer");
         // Set up user interface layout
