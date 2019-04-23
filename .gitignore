@@ -1,0 +1,17 @@
+*.exe
+*.com 
+*.dll
+*.bin
+*.o
+*.so
+*.jar
+*.pdf
+*~
+~*
+*.tar.gz
+*.zip
+
+*.user 
+
+bin/*
+debug/*
