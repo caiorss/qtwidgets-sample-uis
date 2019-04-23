@@ -230,9 +230,10 @@ int main(int argc, char *argv[])
     std::cout << " [INFO] Starting Application OK. " << std::endl;
 
     QApplication app(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
 
     ImageViewer imageViewer;
-    imageViewer.show();
+    imageViewer.showNormal();
 
 
     return app.exec();
