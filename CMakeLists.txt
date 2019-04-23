@@ -37,8 +37,13 @@ add_executable(helloworld ${helloworld_SRCS})
 # Use the Widgets module from Qt 5
 target_link_libraries(helloworld Qt5::Widgets)
 
-add_executable(dirview dirview.cpp)
-target_link_libraries(dirview Qt5::Widgets)
+add_executable(imageview1 imageview1.cpp)
+target_link_libraries(imageview1 Qt5::Widgets)
+
+
+add_executable(imageview2 imageview2.cpp)
+target_link_libraries(imageview2 Qt5::Widgets)
+
 
 if(false)
  add_executable(addressgui addressgui.cpp)
