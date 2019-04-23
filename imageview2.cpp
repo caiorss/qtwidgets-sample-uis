@@ -217,6 +217,10 @@ public:
         return  model->filePath(index);
     }
 
+    QModelIndex GetSelectedItem() const
+    {
+        return tree->selectionModel()->currentIndex();
+    }
 
 };
 
