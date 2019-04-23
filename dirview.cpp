@@ -62,36 +62,67 @@ int main(int argc, char *argv[])
 
     tree.setWindowTitle(QObject::tr("Dir View"));
 
+    QLabel currentFile;
+
     QLabel ImagePanel;
     ImagePanel.setScaledContents(false);
-    ImagePanel.setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
-
+    // ImagePanel.setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+    ImagePanel.setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     ImagePanel.setWindowTitle("Image Panel");
-    ImagePanel.frameSize().setHeight(400);
-    ImagePanel.frameSize().setWidth(500);
-    ImagePanel.setFixedHeight(500);
-    ImagePanel.setFixedWidth(600);
-
-
-    // auto& geom = ImagePanel.;
-    // geom.setHeight(400);
-    // ImagePanel.geometry().setWidth(500);
 
     QObject::connect(tree.selectionModel(), &QItemSelectionModel::selectionChanged, [&]{
        auto index = tree.selectionModel()->currentIndex();
        auto filePath = model.filePath(index);
        std::cout << "Selection changed => File = " << index.data() << std::endl;
        std::cout << "Full path to file = " << filePath << std::endl;
-
+       currentFile.setText(filePath);
        QPixmap pm(filePath); // Open image
        // Scale image to fit in the label
-       ImagePanel.setPixmap(pm.scaled(ImagePanel.width(), ImagePanel.height(), Qt::KeepAspectRatio));
+       if(!pm.isNull())
+        ImagePanel.setPixmap(pm.scaled(ImagePanel.width(), ImagePanel.height(), Qt::KeepAspectRatio));
     });
 
 
+    QPushButton btnSelectDir("Open");
+    QPushButton btnClose("Close");
 
-    tree.show();
-    ImagePanel.showNormal();
+    // QObject::connect(&btnClose, &QPushButton::clicked, []{ std::exit(0); });
+    OnClick(&btnClose, []{
+       std::cout << " [INFO] Exiting application OK." << std::endl;
+       std::exit(0);
+    });
+
+    QObject::connect(&btnSelectDir, &QPushButton::clicked, [&](){
+       QString dir = QFileDialog::getExistingDirectory(nullptr, ("Open Directory"), ".",
+                                                       QFileDialog::ShowDirsOnly
+                                                       | QFileDialog::DontResolveSymlinks
+                                                       );
+       std::cout << "Selected directory = " << dir << std::endl;
+       tree.setRootIndex(model.index(dir));
+    });
+
+
+    QHBoxLayout buttonPanel;
+    buttonPanel.addWidget(&btnSelectDir);
+    buttonPanel.addWidget(&btnClose);
+
+    QHBoxLayout hbox;
+    hbox.addWidget(&tree);
+    hbox.addWidget(&ImagePanel);
+
+    QVBoxLayout vbox;
+    vbox.addWidget(&currentFile);
+    vbox.addLayout(&buttonPanel);
+    vbox.addLayout(&hbox);
+
+    QMainWindow window;
+    window.setLayout(&hbox);
+    window.setCentralWidget(new QWidget);
+    window.centralWidget()->setLayout(&vbox);
+    window.setMinimumHeight(500);
+    window.setMinimumWidth(650);
+    window.resize(QDesktopWidget().availableGeometry(&window).size() * 0.7);
+    window.showNormal();
 
     return app.exec();
 }
