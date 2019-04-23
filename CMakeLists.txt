@@ -49,3 +49,12 @@ if(false)
  add_executable(addressgui addressgui.cpp)
  target_link_libraries(addressgui Qt5::Widgets)
 endif()
+
+#=========== Install Target ==================#
+
+install(
+    TARGETS      imageview2
+    DESTINATION  ${CMAKE_CURRENT_LIST_DIR}/bin
+    )
+
+
