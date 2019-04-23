@@ -116,7 +116,31 @@ private:
         bar->show();
     }
 
+    void SetMenus()
+    {
+       //QCoreApplication::​setAttribute(Qt::AA_DontUseNativeMenuBar);
+
+       QMenuBar* bar = this->menuBar();
+       bar->setNativeMenuBar(false);
+
+       auto openAct = new QAction(tr("&Open..."), this);
+       openAct->setShortcut(tr("Ctrl+O"));
+
+
+       QObject::connect(openAct, &QAction::triggered, [&]{
+          std::cout << " [INFO] Menu clicked OK." << std::endl;
+       });
+
+       QObject::connect(openAct, &QAction::triggered,
+                        std::bind(&ImageViewer::OpenDirectory, this));
+
+       // connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+       fileMenu->addAction(openAct);
+       this->menuBar()->addMenu(fileMenu);
+       bar->show();
+       // bar->addAction(fileMenu->menuAction());
     }
+
     void SetEvents()
     {
         QObject::connect(tree->selectionModel(), &QItemSelectionModel::selectionChanged, [&]{
