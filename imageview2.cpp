@@ -36,6 +36,15 @@ void OnClick(Clickable* object, Callable action)
     QObject::connect(object, &Clickable::clicked, action);
 }
 
+template<typename Selectable, typename Callable>
+void OnSelectionChange(Selectable* object, Callable action)
+{
+        QObject::connect( object->selectionModel(),
+                          &QItemSelectionModel::selectionChanged,
+                          action
+                         );
+}
+
 
 class ImageViewer: public QMainWindow
 {
