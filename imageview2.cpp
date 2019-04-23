@@ -146,8 +146,18 @@ public:
         return *this;
     }
 
+    void OpenDirectory()
     {
+        QString dir = QFileDialog::getExistingDirectory(
+                          this, "Open Directory", ".",
+                        QFileDialog::ShowDirsOnly
+                      | QFileDialog::DontResolveSymlinks
+                    );
+        this->SetRootDirectory(dir);
     }
+
+
+
 };
 
 
