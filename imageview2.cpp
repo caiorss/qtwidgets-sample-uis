@@ -53,8 +53,11 @@ private:
     QTreeView*         tree          = new QTreeView;
     QPushButton*       btnSelectDir  = new QPushButton("Open");
     QPushButton*       btnClose      = new QPushButton("Close");
+
     QLabel*            currentFile   = new QLabel;
     QLabel*            ImagePanel    = new QLabel;
+
+    QMenu*             fileMenu      = new QMenu;
     // QString            root_path     = "/";
 
     void SetLayout()
