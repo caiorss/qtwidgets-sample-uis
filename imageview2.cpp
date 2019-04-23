@@ -127,6 +127,17 @@ private:
 
 public:
 
+    explicit ImageViewer(QString path = QDir::homePath())
+    {
+        this->setWindowTitle("Sample QT5 Image Viewer");
+        // Set up user interface layout
+        this->SetLayout();
+        this->SetMenus();
+        // Install events (signlas and slots)
+        this->SetEvents();
+        this->SetRootDirectory(path);
+    }
+
     ImageViewer&
     SetRootDirectory(QString path)
     {
@@ -135,15 +146,7 @@ public:
         return *this;
     }
 
-
-    explicit ImageViewer(QString path = QDir::homePath())
     {
-        this->setWindowTitle("Sample QT5 Image Viewer");
-        // Set up user interface layout
-        this->SetLayout();
-        // Install events (signlas and slots)
-        this->SetEvents();
-        this->SetRootDirectory(path);
     }
 };
 
