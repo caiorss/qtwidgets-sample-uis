@@ -126,10 +126,12 @@ private:
 
 public:
 
-    void SetRootDirectory(QString path)
+    ImageViewer&
+    SetRootDirectory(QString path)
     {
         model->setRootPath(path);
         tree->setRootIndex(model->index(path));
+        return *this;
     }
 
     ImageViewer(QString path = "/")
