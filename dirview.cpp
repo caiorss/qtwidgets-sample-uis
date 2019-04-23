@@ -29,6 +29,12 @@ auto operator<<(std::ostream& os, QVariant const& var) -> std::ostream&
 }
 
 
+template<typename Clickable, typename Callable>
+void OnClick(Clickable* object, Callable action)
+{
+    QObject::connect(object, &Clickable::clicked, action);
+}
+
 
 int main(int argc, char *argv[])
 {
