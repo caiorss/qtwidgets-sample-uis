@@ -1,6 +1,20 @@
-cmake_minimum_required(VERSION 3.1.0)
 
-project(testproject)
+#====== Global Configurations ==================#
+
+cmake_minimum_required(VERSION 3.9)
+set(CMAKE_CXX_STANDARD 17)
+
+project(SampleQTWidgetsUI)
+
+set(FORCE_CLANG ON)
+# Force compiler to Clang++
+if(FORCE_CLANG)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+endif()
+
+#========== Targets Configurations ============#
+
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
