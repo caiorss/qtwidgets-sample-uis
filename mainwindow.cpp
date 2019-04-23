@@ -21,9 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     // ------------------------------//
 
-   // ui->ImageViewer1->setPixmap(pm);
+   // ui-sds>ImageViewer1->setPixmap(pm);
     ui->ImageViewer1->setScaledContents(true);
-
     ui->textEntry1->setText("Text Entry1");
 
     static auto model = new QStringListModel(this);
@@ -32,12 +31,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ItemList1->setModel(model);
 
     QObject::connect(ui->textEntry1, &QLineEdit::returnPressed, [&]{
+        QString text = ui->textEntry1->text();
+        ui->textEntry1->clear();
+
         std::cout << "User typed = "
-                  << ui->textEntry1->text()
+                  << text
                   << std::endl;
-        auto list = model->stringList();
-        list << ui->textEntry1->text();
-        model->setStringList(list);
+        if(text != "")
+        {
+            auto list = model->stringList();
+            list << text;
+            model->setStringList(list);
+        }
         // list << ui->textEntry1->text();
         // QMessageBox::about(this, "About This program", "A dummy program");
     });
