@@ -114,14 +114,7 @@ private:
            std::exit(0);
         });
 
-        OnClick(btnSelectDir, [&](){
-           QString dir = QFileDialog::getExistingDirectory(nullptr, ("Open Directory"), ".",
-                                                           QFileDialog::ShowDirsOnly
-                                                           | QFileDialog::DontResolveSymlinks
-                                                           );
-           std::cout << "Selected directory = " << dir << std::endl;
-           tree->setRootIndex(model->index(dir));
-        });
+        OnClick(btnSelectDir, std::bind(&ImageViewer::OpenDirectory, this));
 
     }
 
