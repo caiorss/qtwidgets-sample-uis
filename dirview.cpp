@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <QtWidgets>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFileSystemModel>
