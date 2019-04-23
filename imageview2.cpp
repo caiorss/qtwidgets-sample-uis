@@ -199,6 +199,17 @@ public:
         this->SetRootDirectory(dir);
     }
 
+    void DisplayImage(QString file)
+    {
+        currentFile->setText(file);
+        QPixmap pm(file); // Open image
+        // Scale image to fit in the label
+        if(!pm.isNull())
+         ImagePanel->setPixmap(pm.scaled(
+                                  ImagePanel->width(),
+                                  ImagePanel->height(),
+                                  Qt::KeepAspectRatio));
+    }
 
 
 };
