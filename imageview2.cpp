@@ -146,19 +146,10 @@ private:
 
     void SetEvents()
     {
-        QObject::connect(tree->selectionModel(), &QItemSelectionModel::selectionChanged, [&]{
-           auto index = tree->selectionModel()->currentIndex();
-           auto filePath = model->filePath(index);
-           std::cout << "Selection changed => File = " << index.data() << std::endl;
-           std::cout << "Full path to file = " << filePath << std::endl;
-           currentFile->setText(filePath);
-           QPixmap pm(filePath); // Open image
-           // Scale image to fit in the label
-           if(!pm.isNull())
-            ImagePanel->setPixmap(pm.scaled(
-                                     ImagePanel->width(),
-                                     ImagePanel->height(),
-                                     Qt::KeepAspectRatio));
+        OnSelectionChange(tree, [&]{
+           auto file = this->GetSelectedFile();
+           std::cout << " [INFO] Display image = " << file << std::endl;
+           this->DisplayImage(file);
         });
 
         // QObject::connect(&btnClose, &QPushButton::clicked, []{ std::exit(0); });
