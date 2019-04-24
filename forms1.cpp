@@ -30,7 +30,16 @@ int main(int argc, char** argv)
 
     QWidget* form = LoadForm(formPath);
     assert(form != nullptr);
-    form->show();
+    form->showNormal();
+
+    form->setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignCenter,
+            form->size(),
+            qApp->desktop()->availableGeometry()
+        )
+    );
 
     QLineEdit* entryK     = form->findChild<QLineEdit*>("entryK");
     QLineEdit* entryS     = form->findChild<QLineEdit*>("entryS");
@@ -49,7 +58,7 @@ int main(int argc, char** argv)
     QTextEdit* display    = form->findChild<QTextEdit*>("OutputDisplay");
     assert(display != nullptr);
 
-    auto computePrice = [&]{
+    auto displayBSLPrice = [&]{
       int a = 1;
       double q = 0.0;
 
@@ -93,6 +102,10 @@ int main(int argc, char** argv)
 
       display->setText(result);
 
+      // form->nextInFocusChain()->setFocus();
+      // QApplication::focusWidget()->nextInFocusChain()->setFocus();
+      // Set focus on next child widget
+
     };
 
     /** Test case: John. C. Hull
@@ -110,13 +123,13 @@ int main(int argc, char** argv)
     entryT->setText("0.5");
     entrySigma->setText("30");
     entryR->setText("5");
-    computePrice();
+    displayBSLPrice();
 
-    QObject::connect(entryK, &QLineEdit::returnPressed, computePrice);
-    QObject::connect(entryS, &QLineEdit::returnPressed, computePrice);
-    QObject::connect(entryT, &QLineEdit::returnPressed, computePrice);
-    QObject::connect(entryR, &QLineEdit::returnPressed, computePrice);
-    QObject::connect(entrySigma, &QLineEdit::returnPressed, computePrice);
+    QObject::connect(entryK, &QLineEdit::returnPressed, displayBSLPrice);
+    QObject::connect(entryS, &QLineEdit::returnPressed, displayBSLPrice);
+    QObject::connect(entryT, &QLineEdit::returnPressed, displayBSLPrice);
+    QObject::connect(entryR, &QLineEdit::returnPressed, displayBSLPrice);
+    QObject::connect(entrySigma, &QLineEdit::returnPressed, displayBSLPrice);
 
     #if 0
     display->append("<h1>Enter Strike Price</h1>");
