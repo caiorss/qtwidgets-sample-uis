@@ -57,7 +57,9 @@ public:
         QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
 
         QObject::connect(btnReset, &QPushButton::clicked, [this]{
-            QMessageBox::warning(this, "WARNIG", "Error: not implemented");
+            ///QMessageBox::warning(this, "WARNIG", "Error: not implemented");
+            this->Reset();
+            this->UpdateGUI();
         });
 
         // Set initial GUI State
@@ -159,6 +161,7 @@ int main(int argc, char** argv)
     return app.exec();
 }
 
+// ======= Utility Functions ===========//
 
 /** @brief Normal Probability Density Function (mean = 0) and standard deviation = 1  */
 double normal_pdf(double x)
