@@ -21,24 +21,16 @@ auto LoadForm(QString filePath) -> QWidget*
 double normal_pdf(double x);
 double normal_cdf(double x);
 
-class EuropeanOptionsForm: public QMainWindow
+
+class FormLoader: public QMainWindow
 {
 private:
-    QString      formPath   = QCoreApplication::applicationDirPath() + "/form1.ui";
-    QWidget*     form       = LoadForm(formPath);
-    // Extract children widgets from from file
-    QLineEdit*   entryK     = form->findChild<QLineEdit*>("entryK");
-    QLineEdit*   entryS     = form->findChild<QLineEdit*>("entryS");
-    QLineEdit*   entryT     = form->findChild<QLineEdit*>("entryT");
-    QLineEdit*   entrySigma = form->findChild<QLineEdit*>("entrySigma");
-    QLineEdit*   entryR     = form->findChild<QLineEdit*>("entryR");
-    QPushButton* btnClose   = form->findChild<QPushButton*>("btnClose");
-    QPushButton* btnReset   = form->findChild<QPushButton*>("btnReset");
-    QTextEdit*   display    = form->findChild<QTextEdit*>("OutputDisplay");
+    QString  formFile;
+    QWidget* form;
 public:
-
-    EuropeanOptionsForm()
+    FormLoader(QString path)
     {
+        this->LoadForm(path);
         this->setCentralWidget(form);
         this->setWindowTitle(form->windowTitle());
 
@@ -54,6 +46,48 @@ public:
                 qApp->desktop()->availableGeometry()
             )
         );
+
+    }
+    void LoadForm(QString filePath)
+    {
+        QUiLoader loader;
+        formFile = filePath;
+        QFile file(filePath);
+        file.open(QFile::ReadOnly);
+        form = loader.load(&file, nullptr);
+        assert(form != nullptr);
+        file.close();
+    }
+
+    QWidget* GetForm() { return form;  }
+};
+
+class EuropeanOptionsForm: public FormLoader
+{
+private:
+    // Extract children widgets from from file
+    QLineEdit*   entryK;
+    QLineEdit*   entryS;
+    QLineEdit*   entryT;
+    QLineEdit*   entrySigma;
+    QLineEdit*   entryR;
+    QPushButton* btnClose;
+    QPushButton* btnReset;
+    QTextEdit*   display;
+public:
+
+    EuropeanOptionsForm()
+        : FormLoader(QCoreApplication::applicationDirPath() + "/form1.ui")
+    {
+        QWidget* form = this->FormLoader::GetForm();
+        entryK     = form->findChild<QLineEdit*>("entryK");
+        entryS     = form->findChild<QLineEdit*>("entryS");
+        entryT     = form->findChild<QLineEdit*>("entryT");
+        entrySigma = form->findChild<QLineEdit*>("entrySigma");
+        entryR     = form->findChild<QLineEdit*>("entryR");
+        btnClose   = form->findChild<QPushButton*>("btnClose");
+        btnReset   = form->findChild<QPushButton*>("btnReset");
+        display    = form->findChild<QTextEdit*>("OutputDisplay");
 
         QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
 
