@@ -21,44 +21,62 @@ auto LoadForm(QString filePath) -> QWidget*
 double normal_pdf(double x);
 double normal_cdf(double x);
 
-int main(int argc, char** argv)
+class EuropeanOptionsForm: public QMainWindow
 {
-    QApplication app(argc, argv);
+private:
+    QString      formPath   = QCoreApplication::applicationDirPath() + "/form1.ui";
+    QWidget*     form       = LoadForm(formPath);
+    // Extract children widgets from from file
+    QLineEdit*   entryK     = form->findChild<QLineEdit*>("entryK");
+    QLineEdit*   entryS     = form->findChild<QLineEdit*>("entryS");
+    QLineEdit*   entryT     = form->findChild<QLineEdit*>("entryT");
+    QLineEdit*   entrySigma = form->findChild<QLineEdit*>("entrySigma");
+    QLineEdit*   entryR     = form->findChild<QLineEdit*>("entryR");
+    QPushButton* btnClose   = form->findChild<QPushButton*>("btnClose");
+    QPushButton* btnReset   = form->findChild<QPushButton*>("btnReset");
+    QTextEdit*   display    = form->findChild<QTextEdit*>("OutputDisplay");
+public:
 
-    QString formPath = QCoreApplication::applicationDirPath() + "/form1.ui";
-    std::cout << "FormPath = " << formPath.toStdString() << std::endl;
+    EuropeanOptionsForm()
+    {
+        this->setCentralWidget(form);
 
-    QWidget* form = LoadForm(formPath);
-    assert(form != nullptr);
-    form->showNormal();
+        // Set Width and height
+        this->resize(700, 600);
 
-    form->setGeometry(
-        QStyle::alignedRect(
-            Qt::LeftToRight,
-            Qt::AlignCenter,
-            form->size(),
-            qApp->desktop()->availableGeometry()
-        )
-    );
+        // Center Window in the screen
+        this->setGeometry(
+            QStyle::alignedRect(
+                Qt::LeftToRight,
+                Qt::AlignCenter,
+                this->size(),
+                qApp->desktop()->availableGeometry()
+            )
+        );
 
-    QLineEdit* entryK     = form->findChild<QLineEdit*>("entryK");
-    QLineEdit* entryS     = form->findChild<QLineEdit*>("entryS");
-    QLineEdit* entryT     = form->findChild<QLineEdit*>("entryT");
-    QLineEdit* entrySigma = form->findChild<QLineEdit*>("entrySigma");
-    QLineEdit* entryR     = form->findChild<QLineEdit*>("entryR");
+        QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
 
-    QPushButton* btnClose = form->findChild<QPushButton*>("btnClose");
-    QPushButton* btnReset = form->findChild<QPushButton*>("btnReset");
+        QObject::connect(btnReset, &QPushButton::clicked, [this]{
+            QMessageBox::warning(this, "WARNIG", "Error: not implemented");
+        });
 
-    QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
-    QObject::connect(btnReset, &QPushButton::clicked, []{
-        QMessageBox::warning(nullptr, "WARNIG", "Error: not implemented");
-    });
+        // Set initial GUI State
+        this->Reset();
+        // Update UI caculations showing option price
+        this->UpdateGUI();
 
-    QTextEdit* display    = form->findChild<QTextEdit*>("OutputDisplay");
-    assert(display != nullptr);
+        auto update= std::bind(&EuropeanOptionsForm::UpdateGUI, this);
 
-    auto displayBSLPrice = [&]{
+        QObject::connect(entryK, &QLineEdit::returnPressed, update);
+        QObject::connect(entryS, &QLineEdit::returnPressed, update);
+        QObject::connect(entryT, &QLineEdit::returnPressed, update);
+        QObject::connect(entryR, &QLineEdit::returnPressed, update);
+        QObject::connect(entrySigma, &QLineEdit::returnPressed, update);
+
+    }
+
+    void UpdateGUI()
+    {
       int a = 1;
       double q = 0.0;
 
@@ -108,7 +126,8 @@ int main(int argc, char** argv)
 
     };
 
-    /** Test case: John. C. Hull
+    /** Reseut the UI State to default value from
+     * Test case: Book - John. C. Hull -
      * Call European option price
      * K = 50,
      * S0 = 50,
@@ -118,23 +137,24 @@ int main(int argc, char** argv)
      * Expected option price V = 4.8174
      * computed with BlackScholes formula
      */
-    entryK->setText("50");
-    entryS->setText("50");
-    entryT->setText("0.5");
-    entrySigma->setText("30");
-    entryR->setText("5");
-    displayBSLPrice();
+    void Reset()
+    {
+        entryK->setText("50");
+        entryS->setText("50");
+        entryT->setText("0.5");
+        entrySigma->setText("30");
+        entryR->setText("5");
 
-    QObject::connect(entryK, &QLineEdit::returnPressed, displayBSLPrice);
-    QObject::connect(entryS, &QLineEdit::returnPressed, displayBSLPrice);
-    QObject::connect(entryT, &QLineEdit::returnPressed, displayBSLPrice);
-    QObject::connect(entryR, &QLineEdit::returnPressed, displayBSLPrice);
-    QObject::connect(entrySigma, &QLineEdit::returnPressed, displayBSLPrice);
+    }
+};
 
-    #if 0
-    display->append("<h1>Enter Strike Price</h1>");
-    display->append("<p>Computing Greeks<p>");
-    #endif
+
+int main(int argc, char** argv)
+{
+    QApplication app(argc, argv);
+
+    EuropeanOptionsForm form;
+    form.showNormal();
 
     return app.exec();
 }
