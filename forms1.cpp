@@ -169,7 +169,7 @@ public:
     };
 
     /** Reseut the UI State to default value from
-     * Test case: Book - John. C. Hull -
+     * Test case: Book - John. C. Hull - Options, Futures and Other Derivatives
      * Call European option price
      * K = 50,
      * S0 = 50,
@@ -195,8 +195,15 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
+#if 0
+    FormLoader form1(QCoreApplication::applicationDirPath() + "/form1.ui");
+    form1.show();
+#endif
+
+#if 1
     EuropeanOptionsForm form;
     form.showNormal();
+#endif
 
     return app.exec();
 }
