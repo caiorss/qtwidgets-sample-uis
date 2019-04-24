@@ -11,6 +11,8 @@
 #include <QCommandLineOption>
 #include <QLabel>
 
+
+
 /** Makes QString printable */
 auto operator<<(std::ostream& os, QString const& str) -> std::ostream&
 {
@@ -37,7 +39,7 @@ void OnClick(Clickable* object, Callable action)
 }
 
 template<typename Selectable, typename Callable>
-void OnSelectionChange(Selectable* object, Callable action)
+void OnSelectionChange(Selectable* object, Callable&& action)
 {
         QObject::connect( object->selectionModel(),
                           &QItemSelectionModel::selectionChanged,
@@ -53,11 +55,13 @@ private:
     QTreeView*         tree          = new QTreeView;
     QPushButton*       btnSelectDir  = new QPushButton("Open");
     QPushButton*       btnClose      = new QPushButton("Close");
+    QPushButton*       btnAbout      = new QPushButton("About");
 
     QLabel*            currentFile   = new QLabel;
     QLabel*            ImagePanel    = new QLabel;
 
-    QMenu*             fileMenu      = new QMenu;
+    QMenu*             fileMenu      = new QMenu(this);
+    QSystemTrayIcon*   trayIcon      = new QSystemTrayIcon(this);
     // QString            root_path     = "/";
 
     void SetLayout()
@@ -86,6 +90,7 @@ private:
 
         auto buttonPanel = new QHBoxLayout;
         buttonPanel->addWidget(btnSelectDir);
+        buttonPanel->addWidget(btnAbout);
         buttonPanel->addWidget(btnClose);
 
         auto hbox = new QHBoxLayout ;
@@ -159,7 +164,7 @@ private:
         });
 
         OnClick(btnSelectDir, std::bind(&ImageViewer::OpenDirectory, this));
-
+        OnClick(btnAbout, std::bind(&ImageViewer::about, this));
     }
 
 public:
@@ -167,12 +172,34 @@ public:
     explicit ImageViewer(QString path = QDir::homePath())
     {
         this->setWindowTitle("Sample QT5 Image Viewer");
+
+        // Make this Window always on Top
+        this->setWindowFlags(Qt::WindowStaysOnTopHint);
+
         // this->SetMenus();
         // Set up user interface layout
         this->SetLayout();
         // Install events (signlas and slots)
         this->SetEvents();
         this->SetRootDirectory(path);
+
+        // ====== Tray Icon =========//
+
+        auto openAct = new QAction(tr("&Open..."), this);
+        openAct->setShortcut(tr("Ctrl+O"));
+        auto trayMenu = new QMenu(this);
+        trayMenu->addAction(openAct);
+        trayIcon->setContextMenu(trayMenu);
+        trayIcon->setToolTip("Image Viewer Application Control");
+
+        // Load Icon added by resource file imageView2.qrc
+        // that points to the image /images/appicon.png
+        static QIcon appIcon = QIcon(":/icons/appicon.png");
+        // QIcon appIcon = QIcon("/home/archbox/projects/qtwidgets/images/appicon.png");
+        this->setWindowIcon(appIcon);
+        trayMenu->setIcon(appIcon);
+        //trayMenu->add
+        this->trayIcon->show();
     }
 
     ImageViewer&
@@ -216,15 +243,25 @@ public:
         return tree->selectionModel()->currentIndex();
     }
 
+    void about()
+    {
+        QMessageBox::about(this, tr("About this Application"),
+                tr("<p> <b>Image Viewer</b> is a sample QT5 User Iterface created "
+                   "without MOC - Meta Object Compiler. It shows how to take advtange "
+                   "of the modern C++ features for building a minimal QT Widget image viewer application"
+                   ));
+    }
+
 };
 
 
 int main(int argc, char *argv[])
-{
-    std::cout << " [INFO] Starting Application OK. " << std::endl;
-
+{    
     QApplication app(argc, argv);
-    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+
+    qDebug() << " [INFO] Application path = " << QCoreApplication::applicationFilePath();
+    qDebug() << " [INFO] Application PID  = " << QCoreApplication::applicationPid();
+    // QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
 
     ImageViewer imageViewer;
     imageViewer.showNormal();
