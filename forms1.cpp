@@ -40,9 +40,10 @@ public:
     EuropeanOptionsForm()
     {
         this->setCentralWidget(form);
+        this->setWindowTitle(form->windowTitle());
 
         // Set Width and height
-        this->resize(700, 600);
+        this->resize(form->width(), form->height());
 
         // Center Window in the screen
         this->setGeometry(
