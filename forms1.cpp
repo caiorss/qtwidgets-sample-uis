@@ -46,8 +46,12 @@ public:
                 qApp->desktop()->availableGeometry()
             )
         );
-
     }
+
+    // Forbid copy, aka Deep Copy
+    FormLoader(FormLoader const&) = delete;
+    FormLoader& operator=(FormLoader const&) = delete;
+
     void LoadForm(QString filePath)
     {
         QUiLoader loader;
@@ -158,7 +162,7 @@ public:
                   "  <td>Option Price (BLS)</td>"
                   " </tr>"
                   " </table>"
-                  ).arg(K).arg(V); //.arg(d1).arg(d2).arg(V);
+                  ).arg(K, 5, 'F', 3).arg(V, 5, 'F', 3); //.arg(d1).arg(d2).arg(V);
 
       display->setText(result);
 
