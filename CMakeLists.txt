@@ -45,8 +45,6 @@ target_link_libraries(helloworld Qt5::Widgets)
 add_executable(imageview1 imageview1.cpp)
 target_link_libraries(imageview1 Qt5::Widgets)
 
-
-
 add_executable(imageview2 imageview2.cpp imageview2.qrc)
 target_link_libraries(imageview2 Qt5::Widgets)
 
