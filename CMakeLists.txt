@@ -51,6 +51,10 @@ target_link_libraries(imageview2 Qt5::Widgets)
 add_executable(forms1 forms1.cpp)
 target_link_libraries(forms1 Qt5::Widgets Qt5::UiTools)
 
+configure_file(
+  "./form1.ui"
+  "${CMAKE_CURRENT_BINARY_DIR}/" COPYONLY
+)
 
 if(false)
  add_executable(addressgui addressgui.cpp)
