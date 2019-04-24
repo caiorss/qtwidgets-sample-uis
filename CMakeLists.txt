@@ -25,6 +25,11 @@ set(CMAKE_AUTOUIC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
+# find_package(Qt5Declarative CONFIG REQUIRED)
+find_package(Qt5UiTools CONFIG REQUIRED)
+# find_package(Qt5 COMPONENTS Core Gui)
+
+
 
 # Populate a CMake variable with the sources
 set(helloworld_SRCS
@@ -41,8 +46,12 @@ add_executable(imageview1 imageview1.cpp)
 target_link_libraries(imageview1 Qt5::Widgets)
 
 
-add_executable(imageview2 imageview2.cpp)
+
+add_executable(imageview2 imageview2.cpp imageview2.qrc)
 target_link_libraries(imageview2 Qt5::Widgets)
+
+add_executable(forms1 forms1.cpp)
+target_link_libraries(forms1 Qt5::Widgets Qt5::UiTools)
 
 
 if(false)
