@@ -70,12 +70,26 @@ int main(int argc, char** argv)
       double V = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
 
       auto result = QString(
-                  "<h1>European Call Option Price Parameters</h1>"
-                  "<p> K - Strike Price = %1 </p>"
-                  "<p> d1 = %2 </p>"
-                  "<p> d2 = %3 </p>"
-                  "<p> V  = %4 - Option Price or fair value </p>"
-                  ).arg(K).arg(d1).arg(d2).arg(V);
+                  "<h2>European Call Option Price Parameters</h2>"
+                  " <table>"
+                  "<caption>Results of Black-Scholes formulas for European options</caption>"
+                  " <tr>"
+                  "  <th>Variable</th>"
+                  "  <th>Value</th>"
+                  "  <th>Description</th>"
+                  " </tr>"
+                  " <tr>"
+                  "  <td>K</td>"
+                  "  <td>%1</td>"
+                  "  <td>Strike Price</td>"
+                  " </tr>"
+                  " <tr>"
+                  "  <td>V</td>"
+                  "  <td>%2</td>"
+                  "  <td>Option Price (BLS)</td>"
+                  " </tr>"
+                  " </table>"
+                  ).arg(K).arg(V); //.arg(d1).arg(d2).arg(V);
 
       display->setText(result);
 
