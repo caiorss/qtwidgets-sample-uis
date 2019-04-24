@@ -102,7 +102,12 @@ public:
         // Update UI caculations showing option price
         this->UpdateGUI();
 
-        auto update= std::bind(&EuropeanOptionsForm::UpdateGUI, this);
+        auto update = [&]{
+            // Update GUI calculations and results display
+           this->UpdateGUI();
+           // Set UI focus on next form
+           this->focusNextChild();
+        };
 
         QObject::connect(entryK, &QLineEdit::returnPressed, update);
         QObject::connect(entryS, &QLineEdit::returnPressed, update);
