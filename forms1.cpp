@@ -8,7 +8,8 @@
 #include <QtUiTools/QtUiTools>
 #include <QSysInfo>
 
-#define DISP_EXPR(expr) std::cout << " [INFO] " << #expr << " = " << expr << std::endl
+#define DISP_EXPR(expr) \
+  std::cout << " [INFO] " << #expr << " = " << (expr) << std::endl
 
 /** Load from from *.ui file */
 auto LoadForm(QString filePath) -> QWidget*
@@ -215,7 +216,7 @@ int main(int argc, char** argv)
     DISP_EXPR(QSysInfo::buildAbi());
     DISP_EXPR(QSysInfo::kernelType());
     DISP_EXPR(QSysInfo::kernelVersion());
-    DISP_EXPR(QSysInfo::machineUniqueId().toStdString());
+    // DISP_EXPR(QSysInfo::machineUniqueId().toStdString());
     DISP_EXPR(QSysInfo::productType());
     DISP_EXPR(QSysInfo::productVersion());
     DISP_EXPR(QSysInfo::prettyProductName());
