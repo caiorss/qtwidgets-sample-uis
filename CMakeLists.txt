@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(SampleQTWidgetsUI)
 
-set(FORCE_CLANG OFF)
+OPTION(FORCE_CLANG OFF)
+
 # Force compiler to Clang++
 if(FORCE_CLANG)
     set(CMAKE_C_COMPILER clang)
