@@ -67,6 +67,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
+# Enable Resource Compiler
+set(CMAKE_AUTORCC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
@@ -93,8 +95,11 @@ qt5_widgets_app(imageview2 "${imageView2_src}")
 
 
 #-------------------------------------------------#
+qt5_add_resources(forms1_resources forms1.qrc)
+message(" [DEBUG] forms1_resources = ${forms1_resources}")
+qt5_widgets_app(forms1 "forms1.cpp;${forms1_resources}"  "Qt5::UiTools")
 
-qt5_widgets_app(forms1 "forms1.cpp"  "Qt5::UiTools")
+#qt5_add_resources(forms1 forms1.qrc)
 
 configure_file(
   "./form1.ui"

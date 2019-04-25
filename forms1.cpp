@@ -11,12 +11,16 @@
 #define DISP_EXPR(expr) \
   std::cout << " [INFO] " << #expr << " = " << (expr) << std::endl
 
+#define DISP_VALUE(msg, expr) \
+  std::cout << " [INFO] " << (msg) << " = " << (expr) << std::endl
+
+
 /** Load from from *.ui file */
 auto LoadForm(QString filePath) -> QWidget*
 {
     QUiLoader loader;
     QFile file(filePath);
-    file.open(QFile::ReadOnly);
+    // file.open(QFile::ReadOnly);
     QWidget* form = loader.load(&file, nullptr);
     file.close();
     return form;
@@ -69,7 +73,7 @@ public:
         QUiLoader loader;
         formFile = filePath;
         QFile file(filePath);
-        file.open(QFile::ReadOnly);
+       // file.open(QFile::ReadOnly);
         form = loader.load(&file, nullptr);
         assert(form != nullptr);
         file.close();
@@ -93,7 +97,8 @@ private:
 public:
 
     EuropeanOptionsForm()
-        : FormLoader(QCoreApplication::applicationDirPath() + "/form1.ui")
+        : FormLoader(":/assets/form1.ui")
+        //FormLoader(QCoreApplication::applicationDirPath() + "/form1.ui")
     {
         QWidget* form = this->FormLoader::GetForm();
         entryK     = form->findChild<QLineEdit*>("entryK");
