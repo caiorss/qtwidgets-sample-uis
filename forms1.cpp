@@ -241,6 +241,7 @@ int main(int argc, char** argv)
 
 #if 1
     EuropeanOptionsForm form;
+    form.setWindowIcon(QIcon(":/images/appicon.png"));
     form.showNormal();
 #endif
 

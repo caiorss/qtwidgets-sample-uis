@@ -2,4 +2,7 @@
     <qresource prefix="/assets">
         <file>form1.ui</file>
     </qresource>
+    <qresource prefix="/">
+        <file>images/appicon.png</file>
+    </qresource>
 </RCC>
