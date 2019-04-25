@@ -6,6 +6,7 @@
 #include <QtWidgets>
 #include <QApplication>
 #include <QtUiTools/QtUiTools>
+#include <QSysInfo>
 
 #define DISP_EXPR(expr) std::cout << " [INFO] " << #expr << " = " << expr << std::endl
 
