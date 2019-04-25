@@ -58,6 +58,8 @@ public:
         );
     }
 
+    virtual ~FormLoader() = default;
+
     // Forbid copy, aka Deep Copy
     FormLoader(FormLoader const&) = delete;
     FormLoader& operator=(FormLoader const&) = delete;
