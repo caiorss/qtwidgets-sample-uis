@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <functional>
+#include <cassert>
 
 #include <QtWidgets>
 #include <QApplication>
