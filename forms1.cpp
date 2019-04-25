@@ -197,7 +197,11 @@ public:
 
 int main(int argc, char** argv)
 {
+    std::cout << " [INFO] Starting Application" << std::endl;
+
     QApplication app(argc, argv);
+
+    std::cout << " [INFO] Starting Application" << std::endl;
 
 #if 0
     FormLoader form1(QCoreApplication::applicationDirPath() + "/form1.ui");
