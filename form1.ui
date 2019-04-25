@@ -47,7 +47,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>S - Strike Price</string>
+     <string>S - Asset Price</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="entryS">
@@ -187,7 +187,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>28</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEuropean_Option_Price">
