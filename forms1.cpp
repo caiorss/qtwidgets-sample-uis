@@ -7,6 +7,8 @@
 #include <QApplication>
 #include <QtUiTools/QtUiTools>
 
+#define DISP_EXPR(expr) std::cout << " [INFO] " << #expr << " = " << expr << std::endl
+
 /** Load from from *.ui file */
 auto LoadForm(QString filePath) -> QWidget*
 {
@@ -18,6 +20,11 @@ auto LoadForm(QString filePath) -> QWidget*
     return form;
 }
 
+/** Makes QString printable */
+auto operator<<(std::ostream& os, QString const& str) -> std::ostream&
+{
+    return os << str.toStdString();
+}
 
 double normal_pdf(double x);
 double normal_cdf(double x);
@@ -203,6 +210,15 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
 
     std::cout << " [INFO] Starting Application" << std::endl;
+
+    DISP_EXPR(QSysInfo::buildAbi());
+    DISP_EXPR(QSysInfo::kernelType());
+    DISP_EXPR(QSysInfo::kernelVersion());
+    DISP_EXPR(QSysInfo::machineUniqueId().toStdString());
+    DISP_EXPR(QSysInfo::productType());
+    DISP_EXPR(QSysInfo::productVersion());
+    DISP_EXPR(QSysInfo::prettyProductName());
+
 
 #if 0
     FormLoader form1(QCoreApplication::applicationDirPath() + "/form1.ui");
