@@ -78,6 +78,13 @@ find_package(Qt5UiTools CONFIG REQUIRED)
 
 #=================== TARGET CONFIGURATIONS =========================#
 
+# Static Link MINGW Dependencies for avoiding missing DLLs errors
+# Static link libgcc (MinGW C-Runtime Library) and LIBSTDC (MinGW C++ Runtime Library)
+# Reference: https://stackoverflow.com/questions/19450722/include-mingw-libraries-in-compiled-file
+IF(MINGW)
+  set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+ENDIF()
+
 # Populate a CMake variable with the sources
 set(helloworld_SRCS
     mainwindow.ui
