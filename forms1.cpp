@@ -213,6 +213,11 @@ int main(int argc, char** argv)
 
     std::cout << " [INFO] Starting Application" << std::endl;
 
+    DISP_VALUE("Process Identifier - PID",   QCoreApplication::applicationPid());
+    DISP_VALUE("Application Name",           QCoreApplication::applicationName());
+    DISP_VALUE("Application Directory Path", QCoreApplication::applicationDirPath());
+    DISP_VALUE("Current Executable Path",    QCoreApplication::applicationFilePath());
+
     DISP_EXPR(QSysInfo::buildAbi());
     DISP_EXPR(QSysInfo::kernelType());
     DISP_EXPR(QSysInfo::kernelVersion());
