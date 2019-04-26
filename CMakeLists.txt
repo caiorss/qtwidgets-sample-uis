@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(SampleQTWidgetsUI)
 
-OPTION(FORCE_CLANG OFF)
+# OPTION(FORCE_CLANG OFF)
+
+SET(FORCE_CLANG ON)
 
 # Force compiler to Clang++
 if(FORCE_CLANG)
@@ -72,9 +74,9 @@ set(CMAKE_AUTORCC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
-# find_package(Qt5Declarative CONFIG REQUIRED)
 find_package(Qt5UiTools CONFIG REQUIRED)
-# find_package(Qt5 COMPONENTS Core Gui)
+find_package(Qt5Qml CONFIG REQUIRED)
+
 
 #=================== TARGET CONFIGURATIONS =========================#
 
@@ -107,6 +109,11 @@ message(" [DEBUG] forms1_resources = ${forms1_resources}")
 qt5_widgets_app(forms1 "forms1.cpp;${forms1_resources}"  "Qt5::UiTools")
 
 #qt5_add_resources(forms1 forms1.qrc)
+
+qt5_widgets_app(JSEngineTest "jsenginetest.cpp"  "Qt5::Qml")
+
+
+qt5_widgets_app(sigslots "sigslots.cpp")
 
 configure_file(
   "./form1.ui"
