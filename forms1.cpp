@@ -119,6 +119,7 @@ private:
     QLineEdit*   entryR;
     QPushButton* btnClose;
     QPushButton* btnReset;
+    QPushButton* btnShortcut;
     QTextEdit*   display;
 public:
 
@@ -134,6 +135,7 @@ public:
         entryR     = form->findChild<QLineEdit*>("entryR");
         btnClose   = form->findChild<QPushButton*>("btnClose");
         btnReset   = form->findChild<QPushButton*>("btnReset");
+        btnShortcut = form->findChild<QPushButton*>("btnShortcut");
         display    = form->findChild<QTextEdit*>("OutputDisplay");
 
         QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
@@ -161,6 +163,19 @@ public:
         QObject::connect(entryT, &QLineEdit::returnPressed, update);
         QObject::connect(entryR, &QLineEdit::returnPressed, update);
         QObject::connect(entrySigma, &QLineEdit::returnPressed, update);
+
+        QObject::connect(btnShortcut, &QPushButton::clicked, [&]{
+            QString imagePath = QCoreApplication::applicationDirPath() + "/icon.png";
+            QFile::copy(":/images/appicon.png", imagePath);
+            QString path = QDir::homePath() + "/Desktop";
+            ::CreateLinuxDesktopShortcut(
+                        QCoreApplication::applicationName(),
+                        QCoreApplication::applicationFilePath(),
+                        path,
+                        imagePath,
+                        "Application for computing European options"
+                        );
+        });
 
     }
 
@@ -214,6 +229,7 @@ public:
       // Set focus on next child widget
 
     };
+
 
     /** Reseut the UI State to default value from
      * Test case: Book - John. C. Hull - Options, Futures and Other Derivatives
