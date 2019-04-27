@@ -36,6 +36,32 @@ double normal_pdf(double x);
 double normal_cdf(double x);
 
 
+bool CreateLinuxDesktopShortcut(
+        QString const& strName,
+        QString const& applicationPath,
+        QString const& destDirectory,
+        QString const& icon,
+        QString const& comment = ""
+        )
+{
+    QFile link(destDirectory + QDir::separator() + strName + ".desktop");
+    if (link.open(QFile::WriteOnly | QFile::Truncate))
+    {
+    QTextStream out(&link);
+    out.setCodec("UTF-8");
+    out << "[Desktop Entry]" << endl
+        << "Encoding = UTF-8" << endl
+        << "Version  = 1.0" << endl
+        << "Type     = Application" << endl
+        << "Name     = " << strName << endl
+        << "Comment  = " << comment << endl
+        << "Icon     = " << icon    << endl
+        << "Exec     = " << applicationPath << endl;
+        return true;
+    }
+    return false;
+}
+
 class FormLoader: public QMainWindow
 {
 private:
