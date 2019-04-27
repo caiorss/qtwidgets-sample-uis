@@ -163,6 +163,9 @@
       <height>36</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Reset input fields to default values</string>
+    </property>
     <property name="text">
      <string>Reset</string>
     </property>
@@ -176,8 +179,27 @@
       <height>36</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Close this application</string>
+    </property>
     <property name="text">
      <string>Close</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnShortcut">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>190</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Create a desktop shortcut for this applicatio</string>
+    </property>
+    <property name="text">
+     <string>Shortcut</string>
     </property>
    </widget>
   </widget>
@@ -187,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEuropean_Option_Price">
