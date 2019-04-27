@@ -166,8 +166,11 @@ public:
 
         QObject::connect(btnShortcut, &QPushButton::clicked, [&]{
             QString imagePath = QCoreApplication::applicationDirPath() + "/icon.png";
+            // Extract resource file to disk to the application's directory.
             QFile::copy(":/images/appicon.png", imagePath);
-            QString path = QDir::homePath() + "/Desktop";
+            // Determine Desktop Directory
+            QString path = QStandardPaths::displayName(QStandardPaths::DesktopLocation);
+
             ::CreateLinuxDesktopShortcut(
                         QCoreApplication::applicationName(),
                         QCoreApplication::applicationFilePath(),
