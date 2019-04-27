@@ -115,6 +115,8 @@ qt5_widgets_app(JSEngineTest "jsenginetest.cpp"  "Qt5::Qml")
 
 qt5_widgets_app(sigslots "sigslots.cpp")
 
+qt5_widgets_app(FormBuilder "formbuilder.cpp")
+
 configure_file(
   "./form1.ui"
   "${CMAKE_CURRENT_BINARY_DIR}/" COPYONLY
