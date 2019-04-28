@@ -45,12 +45,20 @@ public:
     auto addLineEntry(QString fieldName, QString label) -> FormBuilder&
     {
         QLineEdit* pEntry = new QLineEdit();
+        pEntry->installEventFilter(this);
+        //LineEntry* pEntry = new LineEntry(this);
         static auto handler = [&]{
-            this->focusNextChild();
+           // this->focusNextChild();
             this->onFocusChange_hadler();
-            std::cout << " Focus changed " << std::endl;
+           // std::cout << " Focus changed " << std::endl;
          };
-        QObject::connect(pEntry, &QLineEdit::returnPressed, handler);
+        static auto pressReturnHandler = [&]
+        {
+            this->focusNextChild();
+        };
+
+        QObject::connect(pEntry, &QLineEdit::editingFinished, handler);
+        QObject::connect(pEntry, &QLineEdit::returnPressed, pressReturnHandler);
         return this->addWidget(fieldName, label, pEntry);
     }
 
