@@ -187,15 +187,6 @@ int main(int argc, char** argv)
 
     form.addWidget("table", tbl);
 
-#if 0
-    QPushButton* btnCalc = form.findWidget<QPushButton>("btnCalc");
-    QObject::connect(btnCalc, &QPushButton::clicked, [&]
-    {
-    });
-
-#endif
-
-
     form.onFocusChange([&]{
         double K = form.getInputAsInt("entryK");
         double S = form.getInputAsDouble("entryS");
