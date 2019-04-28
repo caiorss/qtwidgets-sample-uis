@@ -100,18 +100,26 @@ public:
 
     std::map<QString, Entry> entries;
 
-    TableDisplay(size_t rows, size_t columns)
+    TableDisplay()
     {
-        this->setRowCount(rows);
-        this->setColumnCount(columns);
+        //this->setRowCount(rows);
+        this->setColumnCount(3);
         this->setShowGrid(false);
+        this->horizontalHeader()->hide();
+        this->verticalHeader()->hide();
+        // this->setSizeAdjustPolicy(QTableWidget::AdjustToContents);
         this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+        //this->verticalHeader()->resizeSection(2, QHeaderView::AdjustToContents);
+        //this->horizontalHeader()->resizeSection(2, QHeaderView::ExpandingState);
     }
     void AddEntry(QString name, QString description = "")
     {
         entries[name] = Entry{name, description, currentEntry};
+        this->insertRow(currentEntry);
         this->setItem(currentEntry, 0, new QTableWidgetItem(name));
         this->setItem(currentEntry, 2, new QTableWidgetItem(description));
+        this->resizeColumnToContents(2);
         currentEntry++;
     }
     void SetEntry(QString name, double value)
