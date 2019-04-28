@@ -174,16 +174,12 @@ int main(int argc, char** argv)
     form.addLineEntry("entryT", "T - Time to maturity in years");
     form.addLineEntry("entrySigma", "Volatility (sigma) in %");
     form.addLineEntry("entryR", "r - Interest rate in %");
-    form.addWidget("btnCalc", "", new QPushButton("Submit"));
 
-    // QTableModel<double>* m  = new QTableModel<double>;
-    //QTableView*  tbl = new QTableView;
-    //tbl->setModel(m);
-    TableDisplay* tbl = new TableDisplay(9, 5);
-    tbl->AddEntry("Vcall", "Call European option price or fair value at t = 0");
-    tbl->AddEntry("Vput",  "Call European option price or fair value at t = 0");
-    tbl->AddEntry("d1");
-    tbl->AddEntry("d2");
+    TableDisplay* tbl = new TableDisplay();
+    tbl->AddEntry("Vcall", "CALL European option price");
+    tbl->AddEntry("Vput",  "PUT  European option price");
+    tbl->AddEntry("d1", "Helper  BLS parameter");
+    tbl->AddEntry("d2",  "Helper BLS parameter");
 
     form.addWidget("table", tbl);
 
