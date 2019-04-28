@@ -129,6 +129,7 @@ public:
             return;
         int row = it->second.row;
         this->setItem(row, 1, new QTableWidgetItem(tr("%1").arg(value)));
+        this->resizeColumnToContents(1);
     }
 };
 
