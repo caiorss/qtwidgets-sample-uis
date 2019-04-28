@@ -54,6 +54,46 @@ public:
         return this->addWidget(fieldName, label, pEntry);
     }
 
+    bool eventFilter(QObject *obj, QEvent *event) override
+    {
+        if(qobject_cast<QLineEdit*>(obj) != nullptr)
+        {
+            if(event->type() != QEvent::KeyPress)
+                return false;
+
+            QKeyEvent* keyEvt = static_cast<QKeyEvent*>(event);
+            if(keyEvt->key() == Qt::Key_Up)
+            {
+                this->focusPreviousChild();
+                std::cout << " Arrow UP" << std::endl;
+                return true;
+            }
+            if(keyEvt->key() == Qt::Key_Down)
+            {
+                this->focusNextChild();
+                std::cout << " Arrow DOWN" << std::endl;
+                return true;
+            }
+            #if 0
+            if(keyEvt->key() == (Qt::Key_Comma))
+            {
+                QKeyEvent* ke = new QKeyEvent(
+                            keyEvt->type(),
+                            Qt::Key_Period,
+                            keyEvt->modifiers(),
+                            QString("."),
+                            keyEvt->isAutoRepeat(),
+                            keyEvt->count()
+                            );
+                QApplication::sendEvent(obj, ke);
+                return true;
+            }
+            #endif
+            return false;
+        }
+        return QMainWindow::eventFilter(obj, event);
+    }
+
     template<typename T>
     auto findWidget(QString fieldName) -> T*
     {
