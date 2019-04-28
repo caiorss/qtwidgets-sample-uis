@@ -124,6 +124,34 @@ public:
     }
 };
 
+
+/** @brief Normal Probability Density Function (mean = 0) and standard deviation = 1  */
+double normal_pdf(double x)
+{
+    return 1/(std::sqrt(2.0 * M_PI)) * std::exp(- x * x / 2);
+}
+
+/** @brief Cumulative normal distribution approximation  (with mean = 0 and standard deviation = 1)
+ */
+double normal_cdf(double d)
+{
+    constexpr double A [] =
+    {
+        0.31938153,
+       -0.356563782,
+        1.781477937,
+       -1.821255978,
+        1.330274429
+    };
+    constexpr double RSQRT2PI = 0.39894228040143267793994605993438;
+    double K = 1.0 / (1.0 + 0.2316419 * std::fabs(d));
+    double c = RSQRT2PI * std::exp(- 0.5 * d * d) *
+            (K * (A[0] + K * (A[1] + K * (A[2] + K * (A[3] + K * A[4])))));
+    if(d > 0) return 1.0 - c;
+    return c;
+}
+
+
 int main(int argc, char** argv)
 {
     QApplication qapp(argc, argv);
