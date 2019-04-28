@@ -248,7 +248,7 @@ int main(int argc, char** argv)
         double exp_brt = std::exp((b - r) * T);
         double exp_rt = std::exp(-r * T);
         double sqrt_T  = sqrt(T);
-        // European option price at t = 0
+
         a = 1;
         double Vcall = a * S * exp_brt * normal_cdf(a * d1)
                 - a * K * exp_rt * normal_cdf(a * d2);

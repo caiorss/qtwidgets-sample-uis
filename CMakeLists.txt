@@ -89,38 +89,42 @@ ENDIF()
 
 # Populate a CMake variable with the sources
 set(helloworld_SRCS
-    mainwindow.ui
-    mainwindow.cpp
-    main.cpp
+    src/helloworld/mainwindow.ui
+    src/helloworld/mainwindow.cpp
+    src/helloworld/main.cpp
 )
+
 qt5_widgets_app(helloworld "${helloworld_SRCS}")
 
-qt5_widgets_app(imageview1 "imageview1.cpp")
+qt5_widgets_app(imageview1 "src/imageview1/imageview1.cpp")
 
 # ----  EXPERIMENT: Using function  qt5_widgets_app ----------#
 
-SET(imageView2_src imageview2.cpp imageview2.qrc)
+# SET(imageView2_src src/imageview2/imageview2.cpp src/imageview2/imageview2.qrc)
+SET(imageView2_src src/imageview2/imageview2.cpp )
 qt5_widgets_app(imageview2 "${imageView2_src}")
 
 
 #-------------------------------------------------#
-qt5_add_resources(forms1_resources forms1.qrc)
+qt5_add_resources(forms1_resources src/form1/forms1.qrc)
 message(" [DEBUG] forms1_resources = ${forms1_resources}")
-qt5_widgets_app(forms1 "forms1.cpp;${forms1_resources}"  "Qt5::UiTools")
+qt5_widgets_app(forms1 "src/form1/forms1.cpp;${forms1_resources}"  "Qt5::UiTools")
 
 #qt5_add_resources(forms1 forms1.qrc)
 
 qt5_widgets_app(JSEngineTest "jsenginetest.cpp"  "Qt5::Qml")
 
 
-qt5_widgets_app(sigslots "sigslots.cpp")
+qt5_widgets_app(sigslots "src/sigslot/sigslots.cpp")
 
-qt5_widgets_app(FormBuilder "formbuilder.cpp")
+qt5_widgets_app(FormBuilder "src/formbuilder/formbuilder.cpp")
 
+if(false)
 configure_file(
   "./form1.ui"
   "${CMAKE_CURRENT_BINARY_DIR}/" COPYONLY
 )
+endif()
 
 #=========== Install Target ==================#
 
