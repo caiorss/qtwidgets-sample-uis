@@ -200,6 +200,9 @@ public:
         trayMenu->setIcon(appIcon);
         //trayMenu->add
         this->trayIcon->show();
+
+        // Enable Drag and Drop Event
+        this->setAcceptDrops(true);
     }
 
     ImageViewer&
@@ -250,6 +253,18 @@ public:
                    "without MOC - Meta Object Compiler. It shows how to take advtange "
                    "of the modern C++ features for building a minimal QT Widget image viewer application"
                    ));
+    }
+
+
+    void dragEnterEvent(QDragEnterEvent* event) override
+    {
+        const QMimeData* mimeData = event->mimeData();
+        std::cout << "Drag Event" << std::endl;
+        if(!mimeData->hasUrls())
+            return;
+        QString path = mimeData->urls()[0].toLocalFile();
+        if(QDir(path).exists())
+            this->SetRootDirectory(path);
     }
 
 };
