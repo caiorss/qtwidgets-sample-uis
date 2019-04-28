@@ -152,35 +152,70 @@ double normal_cdf(double d)
 }
 
 
+
 int main(int argc, char** argv)
 {
     QApplication qapp(argc, argv);
 
     FormBuilder form;
+    form.resize(500, 400);
     form.addLabel("Option Data");
-    form.addLineEntry("entryS", "S - Asset Price");
     form.addLineEntry("entryK", "K - Srike Price");
+    form.addLineEntry("entryS", "S - Asset Price");
+    form.addLineEntry("entryT", "T - Time to maturity in years");
+    form.addLineEntry("entrySigma", "Volatility (sigma) in %");
     form.addLineEntry("entryR", "r - Interest rate in %");
     form.addWidget("btnCalc", "", new QPushButton("Submit"));
 
-    QTableModel<double>* m  = new QTableModel<double>;
-    QTableView*  tbl = new QTableView;
-    tbl->setModel(m);
-
+    // QTableModel<double>* m  = new QTableModel<double>;
+    //QTableView*  tbl = new QTableView;
+    //tbl->setModel(m);
+    TableDisplay* tbl = new TableDisplay(9, 5);
+    tbl->AddEntry("Vcall", "Call European option price or fair value at t = 0");
+    tbl->AddEntry("Vput",  "Call European option price or fair value at t = 0");
+    tbl->AddEntry("d1");
+    tbl->AddEntry("d2");
 
     form.addWidget("table", tbl);
-
 
 #if 0
     QPushButton* btnCalc = form.findWidget<QPushButton>("btnCalc");
     QObject::connect(btnCalc, &QPushButton::clicked, [&]
     {
     });
+
 #endif
+
+
     form.onFocusChange([&]{
-        double S = form.getInputAsDouble("entryS");
         double K = form.getInputAsInt("entryK");
-        std::cout << "S = " << S << " - " << " K = " << K << std::endl;
+        double S = form.getInputAsDouble("entryS");
+        double T = form.getInputAsDouble("entryT");
+        double sigma = form.getInputAsDouble("entrySigma") / 100.0;
+        double r = form.getInputAsDouble("entryR") / 100.0;
+
+        int a = 1;
+        double q = 0.0;
+        double b = r;
+
+        double d1 = (log(S/K) + (b + sigma * sigma / 2.0) * T) / (sigma * sqrt(T));
+        double d2 = d1 - sigma * std::sqrt(T);
+        // Helper parameter
+        double exp_brt = std::exp((b - r) * T);
+        double exp_rt = std::exp(-r * T);
+        double sqrt_T  = sqrt(T);
+        // European option price at t = 0
+        a = 1;
+        double Vcall = a * S * exp_brt * normal_cdf(a * d1)
+                - a * K * exp_rt * normal_cdf(a * d2);
+        a = -1;
+        double Vput = a * S * exp_brt * normal_cdf(a * d1)
+                - a * K * exp_rt * normal_cdf(a * d2);
+
+        tbl->SetEntry("d1", d1);
+        tbl->SetEntry("d2", d2);
+        tbl->SetEntry("Vcall", Vcall);
+        tbl->SetEntry("Vput",  Vput);
     });
 
     form.show();
