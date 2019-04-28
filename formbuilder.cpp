@@ -87,6 +87,43 @@ public:
     }
 };
 
+class TableDisplay: public QTableWidget
+{
+public:
+    int currentEntry = 0;
+    struct Entry
+    {
+      QString name;
+      QString description;
+      int row;
+    };
+
+    std::map<QString, Entry> entries;
+
+    TableDisplay(size_t rows, size_t columns)
+    {
+        this->setRowCount(rows);
+        this->setColumnCount(columns);
+        this->setShowGrid(false);
+        this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+    void AddEntry(QString name, QString description = "")
+    {
+        entries[name] = Entry{name, description, currentEntry};
+        this->setItem(currentEntry, 0, new QTableWidgetItem(name));
+        this->setItem(currentEntry, 2, new QTableWidgetItem(description));
+        currentEntry++;
+    }
+    void SetEntry(QString name, double value)
+    {
+        auto it = entries.find(name);
+        if(it == entries.end())
+            return;
+        int row = it->second.row;
+        this->setItem(row, 1, new QTableWidgetItem(tr("%1").arg(value)));
+    }
+};
+
 int main(int argc, char** argv)
 {
     QApplication qapp(argc, argv);
