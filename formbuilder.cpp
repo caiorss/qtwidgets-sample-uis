@@ -167,7 +167,7 @@ int main(int argc, char** argv)
     QApplication qapp(argc, argv);
 
     FormBuilder form;
-    form.resize(500, 400);
+    form.resize(500, 550);
     form.addLabel("Option Data");
     form.addLineEntry("entryK", "K - Srike Price");
     form.addLineEntry("entryS", "S - Asset Price");
