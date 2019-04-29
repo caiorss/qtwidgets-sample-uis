@@ -75,8 +75,8 @@ set(CMAKE_AUTORCC ON)
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5UiTools CONFIG REQUIRED)
-find_package(Qt5Qml CONFIG REQUIRED)
-
+find_package(Qt5Qml     CONFIG REQUIRED)
+find_package(Qt5Script  CONFIG REQUIRED)
 
 #=================== TARGET CONFIGURATIONS =========================#
 
@@ -119,12 +119,18 @@ qt5_widgets_app(sigslots "src/sigslot/sigslots.cpp")
 
 qt5_widgets_app(FormBuilder "src/formbuilder/formbuilder.cpp")
 
+
+qt5_widgets_app(qscript "qscript.cpp" "Qt5::Script")
+
+
 if(false)
 configure_file(
   "./form1.ui"
   "${CMAKE_CURRENT_BINARY_DIR}/" COPYONLY
 )
 endif()
+
+
 
 #=========== Install Target ==================#
 
