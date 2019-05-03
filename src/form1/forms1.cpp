@@ -138,7 +138,10 @@ public:
         btnShortcut = form->findChild<QPushButton*>("btnShortcut");
         display    = form->findChild<QTextEdit*>("OutputDisplay");
 
-        QObject::connect(btnClose, &QPushButton::clicked, []{ std::exit(0); });
+        QObject::connect(btnClose, &QPushButton::clicked, []{
+            // std::exit(0);
+            QApplication::exit(0);
+        });
 
         QObject::connect(btnReset, &QPushButton::clicked, [this]{
             ///QMessageBox::warning(this, "WARNIG", "Error: not implemented");
@@ -157,6 +160,14 @@ public:
            // Set UI focus on next form
            this->focusNextChild();
         };
+
+        // Restore window size and position
+        this->RestoreAppState();
+
+        // Save application state when the main Window is destroyed
+        QObject::connect(this, &QMainWindow::destroyed, [this]{
+           this->SaveAppState();
+        });
 
         QObject::connect(entryK, &QLineEdit::returnPressed, update);
         QObject::connect(entryS, &QLineEdit::returnPressed, update);
@@ -254,6 +265,39 @@ public:
         entryR->setText("5");
 
     }
+
+    void SaveAppState() const
+    {
+        QSettings conf;
+        // Save current window position
+        conf.setValue("pos", this->pos());
+        // Save current window size before closing
+        conf.setValue("size", this->size());
+        // Save current state
+        conf.setValue("state", this->saveState());
+
+        qDebug() << " [INFO] Application state saved OK.";
+    }
+
+    void RestoreAppState()
+    {
+        QSettings conf;
+        // Default window position
+        constexpr int top = 200, left = 200;
+        // Defailt window size
+        constexpr int width = 600, height = 500;
+
+        // Note: QPoint(top, left) is the default value for the setting
+        // if the configuration is not defined.
+        QPoint pos  = conf.value("pos", QPoint(top, left)).toPoint();
+
+        QSize  size = conf.value("size",  QSize(width, height)).toSize();
+        QByteArray state = conf.value("state", QByteArray()).toByteArray();
+        this->restoreState(state);
+        this->resize(size);
+        this->move(pos);
+    }
+
 };
 
 
@@ -262,6 +306,9 @@ int main(int argc, char** argv)
     std::cout << " [INFO] Starting Application" << std::endl;
 
     QApplication app(argc, argv);
+    app.setOrganizationName("UniqueOrganizatioName");
+    app.setOrganizationDomain("myorganization.net.domain");
+    app.setApplicationName("European Option BLS Pricing Calculator");
 
     std::cout << " [INFO] Starting Application" << std::endl;
 
@@ -278,11 +325,6 @@ int main(int argc, char** argv)
     DISP_EXPR(QSysInfo::productVersion());
     DISP_EXPR(QSysInfo::prettyProductName());
 
-
-#if 0
-    FormLoader form1(QCoreApplication::applicationDirPath() + "/form1.ui");
-    form1.show();
-#endif
 
 #if 1
     EuropeanOptionsForm form;
