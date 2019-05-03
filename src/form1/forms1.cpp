@@ -146,17 +146,17 @@ public:
         QObject::connect(btnReset, &QPushButton::clicked, [this]{
             ///QMessageBox::warning(this, "WARNIG", "Error: not implemented");
             this->Reset();
-            this->UpdateGUI();
+            this->Recalculate();
         });
 
         // Set initial GUI State
         this->Reset();
         // Update UI caculations showing option price
-        this->UpdateGUI();
+        this->Recalculate();
 
         auto update = [&]{
             // Update GUI calculations and results display
-           this->UpdateGUI();
+           this->Recalculate();
            // Set UI focus on next form
            this->focusNextChild();
         };
@@ -193,7 +193,7 @@ public:
 
     }
 
-    void UpdateGUI()
+    void Recalculate()
     {
       int a = 1;
       double q = 0.0;
