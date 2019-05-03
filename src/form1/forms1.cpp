@@ -336,7 +336,7 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
     app.setOrganizationName("UniqueOrganizatioName");
     app.setOrganizationDomain("myorganization.net.domain");
-    app.setApplicationName("European Option BLS Pricing Calculator");
+    app.setApplicationName("BLSCalculator");
 
     std::cout << " [INFO] Starting Application" << std::endl;
 
