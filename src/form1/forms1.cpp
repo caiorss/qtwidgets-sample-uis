@@ -276,6 +276,16 @@ public:
         // Save current state
         conf.setValue("state", this->saveState());
 
+        auto saveEntryState = [&](QString name, QLineEdit* entry){
+            conf.setValue(name, entry->text().toDouble());
+        };
+
+        saveEntryState("entryK", this->entryK);
+        saveEntryState("entryS", this->entryS);
+        saveEntryState("entryT", this->entryT);
+        saveEntryState("entrySigma", this->entrySigma);
+        saveEntryState("entryR", this->entryR);
+
         qDebug() << " [INFO] Application state saved OK.";
     }
 
