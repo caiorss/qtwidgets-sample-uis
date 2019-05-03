@@ -306,6 +306,21 @@ public:
         this->restoreState(state);
         this->resize(size);
         this->move(pos);
+
+        auto loadEntryState = [&]( QString    name,
+                                   QLineEdit* entry,
+                                   double     default_value )
+        {
+            double value = conf.value(name, default_value).toDouble();
+            entry->setText(QString::number(value));
+        };
+
+        loadEntryState("entryK",     this->entryK,     50.0);
+        loadEntryState("entryS",     this->entryS,     50.0);
+        loadEntryState("entryT",     this->entryT,     30.0);
+        loadEntryState("entrySigma", this->entrySigma, 30.0);
+        loadEntryState("entryR",     this->entryR,     5.0);
+        this->Recalculate();
     }
 
 };
