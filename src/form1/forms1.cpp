@@ -179,12 +179,15 @@ public:
             QString imagePath = QCoreApplication::applicationDirPath() + "/icon.png";
             // Extract resource file to disk to the application's directory.
             QFile::copy(":/images/appicon.png", imagePath);
-            // Determine Desktop Directory
-            QString path = QStandardPaths::displayName(QStandardPaths::DesktopLocation);
 
+            QString path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation)[0];
+
+            // Split variables for better debugging
+            auto appName = QCoreApplication::applicationName();
+            auto appPath = QCoreApplication::applicationFilePath();
             ::CreateLinuxDesktopShortcut(
-                        QCoreApplication::applicationName(),
-                        QCoreApplication::applicationFilePath(),
+                        appName,
+                        appPath,
                         path,
                         imagePath,
                         "Application for computing European options"
