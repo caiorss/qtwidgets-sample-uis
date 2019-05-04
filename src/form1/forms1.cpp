@@ -125,6 +125,8 @@ private:
     QPushButton* btnReset;
     QPushButton* btnShortcut;
     QTextEdit*   display;
+    QTimer*      timer = new QTimer(this);
+    QLabel* DateTimeDisplay;
 public:
 
     EuropeanOptionsForm()
@@ -132,15 +134,25 @@ public:
         //FormLoader(QCoreApplication::applicationDirPath() + "/form1.ui")
     {
         QWidget* form = this->FormLoader::GetForm();
-        entryK     = form->findChild<QLineEdit*>("entryK");
-        entryS     = form->findChild<QLineEdit*>("entryS");
-        entryT     = form->findChild<QLineEdit*>("entryT");
-        entrySigma = form->findChild<QLineEdit*>("entrySigma");
-        entryR     = form->findChild<QLineEdit*>("entryR");
-        btnClose   = form->findChild<QPushButton*>("btnClose");
-        btnReset   = form->findChild<QPushButton*>("btnReset");
-        btnShortcut = form->findChild<QPushButton*>("btnShortcut");
-        display    = form->findChild<QTextEdit*>("OutputDisplay");
+        entryK       = form->findChild<QLineEdit*>("entryK");
+        entryS       = form->findChild<QLineEdit*>("entryS");
+        entryT       = form->findChild<QLineEdit*>("entryT");
+        entrySigma   = form->findChild<QLineEdit*>("entrySigma");
+        entryR       = form->findChild<QLineEdit*>("entryR");
+        btnClose     = form->findChild<QPushButton*>("btnClose");
+        btnReset     = form->findChild<QPushButton*>("btnReset");
+        btnShortcut  = form->findChild<QPushButton*>("btnShortcut");
+        display      = form->findChild<QTextEdit*>("OutputDisplay");
+        DateTimeDisplay  = form->findChild<QLabel*>("DateTimeDisplay");
+
+        // 1 second interval = 1000 milliseconds
+        timer->setInterval(1000);
+        QObject::connect(timer, &QTimer::timeout, [&]{
+           QDateTime dt = QDateTime::currentDateTime();
+           QString text = "Current Time: " + dt.toLocalTime().toString();
+           DateTimeDisplay->setText(text);
+        });
+        timer->start();
 
         QObject::connect(btnClose, &QPushButton::clicked, []{
             // std::exit(0);
