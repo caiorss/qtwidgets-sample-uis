@@ -196,6 +196,20 @@ public:
 
     }
 
+    // Set strike price
+    void SetK(double value)
+    {
+        qDebug() << " [INFO] Set strike price";
+        this->entryK->setText(QString::number(value));
+        this->Recalculate();
+    }
+
+    void SetS(double value)
+    {
+        this->entryS->setText(QString::number(value));
+        this->Recalculate();
+    }
+
     void Recalculate()
     {
       int a = 1;
