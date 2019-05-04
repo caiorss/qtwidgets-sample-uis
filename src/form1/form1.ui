@@ -202,6 +202,19 @@
      <string>Shortcut</string>
     </property>
    </widget>
+   <widget class="QLabel" name="DateTimeDisplay">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>0</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date time: </string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
