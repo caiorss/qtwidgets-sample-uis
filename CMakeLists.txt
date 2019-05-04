@@ -60,7 +60,9 @@ endfunction()
 
 #=================================================================#
 
-set(CMAKE_PREFIX_PATH "C:/Qt/5.12.2/mingw73_64/lib/cmake")
+if(WIN32)
+    set(CMAKE_PREFIX_PATH "C:/Qt/5.12.2/mingw73_64/lib/cmake")
+endif()
 
 
 # Find includes in corresponding build directories
