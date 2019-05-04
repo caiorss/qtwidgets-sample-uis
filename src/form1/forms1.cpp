@@ -2,11 +2,15 @@
 #include <iomanip>
 #include <functional>
 #include <cassert>
+#include <sstream>
 
 #include <QtWidgets>
 #include <QApplication>
 #include <QtUiTools/QtUiTools>
 #include <QSysInfo>
+
+
+#include <QtConcurrent/QtConcurrent>
 
 #define DISP_EXPR(expr) \
   std::cout << " [INFO] " << #expr << " = " << (expr) << std::endl
@@ -370,12 +374,47 @@ int main(int argc, char** argv)
     DISP_EXPR(QSysInfo::productVersion());
     DISP_EXPR(QSysInfo::prettyProductName());
 
-
-#if 1
     EuropeanOptionsForm form;
     form.setWindowIcon(QIcon(":/images/appicon.png"));
     form.showNormal();
-#endif
+
+    // Background thread for Console/REPL interactive shell where an user
+    // can send commands to user interface form1 object.
+    QtConcurrent::run([&]{
+       std::string line;
+       std::string name;
+       double      value;
+       while(true){
+           std::cout << " COMMAND >> ";
+           std::getline(std::cin, line);
+
+           if(line == "exit"){
+               QCoreApplication::exit(0);
+               return;
+           }
+
+           std::stringstream ss(line);
+           ss >> name >> value;
+           std::cout << " name = " << name
+                     << " ; value = " << value << std::endl;
+
+           if(name == "K")
+           {
+               // Send message to form in main thread
+               QMetaObject::invokeMethod( &form
+                                         , [&]{ form.SetK(value); }
+                                        );
+               continue;
+            }
+           if(name == "S")
+           {
+               QMetaObject::invokeMethod( &form
+                                         , [&]{ form.SetS(value); }
+                                        );
+               continue;
+           }
+       }
+    });
 
     return app.exec();
 }
