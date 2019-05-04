@@ -354,6 +354,9 @@ int main(int argc, char** argv)
 
     std::cout << " [INFO] Starting Application" << std::endl;
 
+    // Useful for debugging
+    std::cout << " [INFO] QTVersion = " << ::qVersion() << std::endl;
+
     DISP_VALUE("Process Identifier - PID",   QCoreApplication::applicationPid());
     DISP_VALUE("Application Name",           QCoreApplication::applicationName());
     DISP_VALUE("Application Directory Path", QCoreApplication::applicationDirPath());
