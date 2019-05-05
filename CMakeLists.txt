@@ -129,6 +129,8 @@ qt5_widgets_app(qscript "qscript.cpp" "Qt5::Script")
 qt5_widgets_app(network1 "network1.cpp" "Qt5::Network")
 
 
+qt5_widgets_app(databinding "databinding.cpp")
+
 if(false)
 configure_file(
   "./form1.ui"
