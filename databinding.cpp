@@ -236,26 +236,26 @@ public:
 
     BLSFormula2()
     {
-        m_K = AddPropertyValue("K", 50.0);
-        m_S = AddPropertyValue("S", 50.0);
-        m_T = AddPropertyValue("T", 0.5);
-        m_r = AddPropertyValue("sigma", 0.30);
-        m_r = AddPropertyValue("r", 0.05);
+        m_K     = AddPropertyValue("K",    50.00);
+        m_S     = AddPropertyValue("S",    50.00);
+        m_T     = AddPropertyValue("T",     0.50);
+        m_sigma = AddPropertyValue("sigma", 0.30);
+        m_r     = AddPropertyValue("r",     0.05);
+
     }
 
 
-#if 1
-    IProperty* K()     { return m_K; }
-    IProperty* S()     { return m_S; }
-    IProperty* T()     { return m_T; }
-    IProperty* r()     { return m_r; }
-    IProperty* sigma() { return m_T; }
+    IProperty& K()     { return *m_K; }
+    IProperty& S()     { return *m_S; }
+    IProperty& T()     { return *m_T; }
+    IProperty& r()     { return *m_r; }
+    IProperty& sigma() { return *m_T; }
 
     void Recalculate()
     {
         double K     = m_K->Get().toDouble();
         double S     = m_S->Get().toDouble();
-        double T     = m_K->Get().toDouble();
+        double T     = m_T->Get().toDouble();
         double sigma = m_sigma->Get().toDouble();
         double r     = m_r->Get().toDouble();
 
