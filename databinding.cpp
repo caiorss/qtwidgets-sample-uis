@@ -299,6 +299,37 @@ enum class BindingMode: std::uint32_t
     OneWay, TwoWays
 };
 
+struct Converter
+{
+    using ConverterFun = std::function<QVariant (QVariant)>;
+    ConverterFun m_convert_to;
+    ConverterFun m_convert_back;
+
+    Converter()
+    {
+        auto identity = [=](QVariant value){ return value; };
+        m_convert_to = identity;
+        m_convert_back = identity;
+    }
+
+    Converter(ConverterFun to, ConverterFun from)
+        : m_convert_to(to), m_convert_back(from)
+    {
+    }
+    static Converter DoubleToQString()
+    {
+        return Converter{
+            [](QVariant x){
+                return  QString::number(x.toDouble());
+            },
+            [](QVariant x){
+                return x.toDouble();
+            }
+        };
+    }
+};
+
+
 struct Binding
 {
   InotifyPropertyChanged* source;
