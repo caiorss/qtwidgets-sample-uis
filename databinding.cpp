@@ -371,6 +371,27 @@ void SetBinding( Binding const& binding,
         binding.source->SetProperty(binding.path, conv.m_convert_back(x));
     });
 
+/** 1 Way data binding */
+template<typename TWidget>
+void SetBinding1W( Binding const& binding,
+                   TWidget* widget,
+                   QString property,
+                   Converter conv = {}
+                )
+{
+    // Set target's property initial value
+    QVariant src   = binding.source->GetProperty(binding.path);
+    QVariant value = conv.m_convert_to(src);
+    widget->setProperty(property.toStdString().c_str(), value);
+
+    binding.source->Subscribe([=](QString name){
+        if(name == binding.path)
+        {
+            QVariant src   = binding.source->GetProperty(binding.path);
+            QVariant value = conv.m_convert_to(src);
+            widget->setProperty(property.toStdString().c_str(), value);
+        }
+    });
 } // --- End of SetBinding ----- //
 
 
