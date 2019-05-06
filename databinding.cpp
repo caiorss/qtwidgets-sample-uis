@@ -344,7 +344,7 @@ struct Binding
 };
 
 template<typename TWidget, typename R, typename ... Args>
-void SetBinding( Binding const& binding,
+void SetBinding2W( Binding const& binding,
                  TWidget* widget,
                  QString property,
                  R (TWidget::* signal) (Args ...),
@@ -365,11 +365,15 @@ void SetBinding( Binding const& binding,
         }
     });
 
-    QObject::connect(widget, signal, [=]{
-        const char* propertyName = property.toLocal8Bit().data();
-        QVariant x = widget->property(propertyName);
-        binding.source->SetProperty(binding.path, conv.m_convert_back(x));
-    });
+    if(binding.mode == BindingMode::TwoWays)
+        QObject::connect(widget, signal, [=]
+        {
+            const char* propertyName = property.toLocal8Bit().data();
+            QVariant x = widget->property(propertyName);
+            binding.source->SetProperty(binding.path, conv.m_convert_back(x));
+        });
+
+} // --- End of SetBinding ----- //
 
 /** 1 Way data binding */
 template<typename TWidget>
@@ -395,6 +399,8 @@ void SetBinding1W( Binding const& binding,
 } // --- End of SetBinding ----- //
 
 
+
+
 int main(int argc, char** argv)
 {
     std::cout << " [INFO] Starting Application" << std::endl;
@@ -409,10 +415,10 @@ int main(int argc, char** argv)
     wnd.centralWidget()->setLayout(form);
 
     QLineEdit* entryK1 = new QLineEdit();
-    form->addRow("k Strike Price 1", entryK1);
+    form->addRow("k Strike Price: ", entryK1);
 
-    QLineEdit* entryK2 = new QLineEdit();
-    form->addRow("k Strike Price 2", entryK2);
+    QLineEdit* entryS = new QLineEdit();
+    form->addRow("S Asse Price: ", entryS);
 
 
     QLabel* labelVcall = new QLabel("0.0");
@@ -421,13 +427,17 @@ int main(int argc, char** argv)
     BLSFormula2 bls;
 
     Binding b_K = Binding{&bls, "K", BindingMode::TwoWays};
-
-    SetBinding(b_K, entryK1, "text", &QLineEdit::editingFinished
+    SetBinding2W(b_K, entryK1, "text"
+               , &QLineEdit::editingFinished
                , Converter::DoubleToQString());
 
-    SetBinding(b_K, entryK2, "text", &QLineEdit::editingFinished
+    Binding b_S = Binding{&bls, "S", BindingMode::TwoWays};
+    SetBinding2W(b_S, entryS, "text"
+               , &QLineEdit::editingFinished
                , Converter::DoubleToQString());
 
+    Binding b_Vcall = {&bls, "Vcall", BindingMode::OneWay};
+    SetBinding1W(b_Vcall, labelVcall, "text");
 
-    return app.exec();
+   return app.exec();
 }
