@@ -356,7 +356,6 @@ void SetBinding(Binding const& binding,
         }
     });
 
-
     QObject::connect(widget, signal, [=]{
         const char* propertyName = property.toLocal8Bit().data();
         QVariant x = widget->property(propertyName);
@@ -399,58 +398,6 @@ int main(int argc, char** argv)
     SetBinding(b_K, entryK2, "text", &QLineEdit::editingFinished
                , Converter::DoubleToQString());
 
-
-#if 0
-    QObject::connect(entryK1, &QLineEdit::returnPressed, [&]
-    {
-       double value = entryK1->property("text").toDouble();
-       std::cout << " Value = " << value << std::endl;
-       bls.property("K")->Set(value);
-       std::cout << " [INFO] User press return entryK1 " << std::endl;
-    });
-
-    bls.Subscribe([&](QString name)
-    {
-        if(name == "K")
-            entryK1->setText(QString::number(bls.GetProperty("K").toDouble()));
-    });
-#endif
-
-    // Observable object
-    //BLSFormula obs;
-    //Binding b1 = {&obs, "K", BindingMode::TwoWays};
-
-#if 0
-    QObject::connect(entryK1, &QLineEdit::returnPressed, [&]
-    {
-       double value = entryK1->text().toDouble();
-       obs.SetK(value);
-       std::cout << " [INFO] User press return entryK1 " << std::endl;
-    });
-
-    obs.Subscribe([&](QString name)
-    {
-        if(name == "K") entryK1->setText(QString::number(obs.K));
-    });
-
-    obs.Subscribe([&](QString name)
-    {
-        if(name == "K") entryK2->setText(QString::number(obs.K));
-    });
-
-    QObject::connect(entryK2, &QLineEdit::returnPressed, [&]
-    {
-       double value = entryK2->text().toDouble();
-       std::cout << " [INFO] User press return entryK1 " << std::endl;
-       obs.SetK(value);
-    });
-
-
-    obs.Subscribe([&](QString name)
-    {
-        labelVcall->setText(QString::number(obs.Vcall));
-    });
-#endif
 
     return app.exec();
 }
