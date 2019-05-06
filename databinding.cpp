@@ -340,13 +340,18 @@ struct Binding
 };
 
 template<typename TWidget, typename R, typename ... Args>
-void SetBinding(Binding const& binding,
-                TWidget* widget,
-                QString property,
-                R (TWidget::* signal) (Args ...),
-                Converter conv = {}
-               )
+void SetBinding( Binding const& binding,
+                 TWidget* widget,
+                 QString property,
+                 R (TWidget::* signal) (Args ...),
+                 Converter conv = {}
+                )
 {
+    // Set target's property initial value
+    QVariant src   = binding.source->GetProperty(binding.path);
+    QVariant value = conv.m_convert_to(src);
+    widget->setProperty(property.toStdString().c_str(), value);
+
     binding.source->Subscribe([=](QString name){
         if(name == binding.path)
         {
