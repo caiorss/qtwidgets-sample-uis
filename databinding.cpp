@@ -339,28 +339,31 @@ struct Binding
       : source(source), path(path), mode(mode){ }
 };
 
-void SetLineEditBinding(Binding const& binding, QLineEdit* edit);
-
-
-#if 0
-void Bind2WData_prototype1(  InotifyPropertyChanged* source
-                           , QLineEdit* target
-                           , QString source_property_name
-                           )
+template<typename TWidget, typename R, typename ... Args>
+void SetBinding(Binding const& binding,
+                TWidget* widget,
+                QString property,
+                R (TWidget::* signal) (Args ...),
+                Converter conv = {}
+               )
 {
-    QObject::connect(target, &QLineEdit::returnPressed, [&]
-    {
-       double value = target->text().toDouble();
-       obs.SetK(value);
-       std::cout << " [INFO] User press return target " << std::endl;
+    binding.source->Subscribe([=](QString name){
+        if(name == binding.path)
+        {
+            QVariant src   = binding.source->GetProperty(binding.path);
+            QVariant value = conv.m_convert_to(src);
+            widget->setProperty(property.toStdString().c_str(), value);
+        }
     });
 
-    source->Subscribe([=](QString name)
-    {
-        if(name == "K") target->setText(QString::number(obs.K));
+
+    QObject::connect(widget, signal, [=]{
+        const char* propertyName = property.toLocal8Bit().data();
+        QVariant x = widget->property(propertyName);
+        binding.source->SetProperty(binding.path, conv.m_convert_back(x));
     });
-}
-#endif
+
+} // --- End of SetBinding ----- //
 
 
 int main(int argc, char** argv)
