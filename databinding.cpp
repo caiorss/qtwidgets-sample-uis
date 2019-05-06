@@ -242,6 +242,9 @@ public:
         m_sigma = AddPropertyValue("sigma", 0.30);
         m_r     = AddPropertyValue("r",     0.05);
 
+        AddPropertyValue("Vcall", 0.0);
+        AddPropertyValue("Vput",  0.0);
+
     }
 
 
@@ -279,9 +282,10 @@ public:
 
         m_d1 = d1;
         m_d2 = d2;
-    }
 
-#endif
+        this->SetProperty("Vcall", m_Vcall);
+        this->SetProperty("Vput",  m_Vput);
+    }
 
 };
 
