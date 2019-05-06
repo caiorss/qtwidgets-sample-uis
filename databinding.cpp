@@ -245,6 +245,15 @@ public:
         AddPropertyValue("Vcall", 0.0);
         AddPropertyValue("Vput",  0.0);
 
+        this->Recalculate();
+
+        this->Subscribe([&](QString name){
+            std::cout << " [INFO] Modifed property = " << name.toStdString()
+                      << std::endl;
+            if(name == "K" || name == "S" || name == "T" ||
+                    name == "sigma" || name == "r" )
+              this->Recalculate();
+        });
     }
 
 
