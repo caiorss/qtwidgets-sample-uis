@@ -389,17 +389,22 @@ int main(int argc, char** argv)
     QLabel* labelVcall = new QLabel("0.0");
     form->addRow("Vcall - Call Option Price = ", labelVcall);
 
-#if 2
     BLSFormula2 bls;
-    bls.K()->Set(50.0);
-    bls.S()->Set(50.0);
-    bls.T()->Set(0.5);
-    bls.T()->Set(0.30);
-    bls.r()->Set(0.05);
 
+    Binding b_K = Binding{&bls, "K", BindingMode::TwoWays};
+
+    SetBinding(b_K, entryK1, "text", &QLineEdit::editingFinished
+               , Converter::DoubleToQString());
+
+    SetBinding(b_K, entryK2, "text", &QLineEdit::editingFinished
+               , Converter::DoubleToQString());
+
+
+#if 0
     QObject::connect(entryK1, &QLineEdit::returnPressed, [&]
     {
-       double value = entryK1->text().toDouble();
+       double value = entryK1->property("text").toDouble();
+       std::cout << " Value = " << value << std::endl;
        bls.property("K")->Set(value);
        std::cout << " [INFO] User press return entryK1 " << std::endl;
     });
