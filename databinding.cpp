@@ -43,92 +43,84 @@ using PropertyChangedHandler = std::function<void (QString)>;
 template <typename T>
 class TProperty;
 
+
 class IProperty
 {
 public:
-  virtual QString               Name() const = 0;
-  virtual std::type_info const& Type() const = 0 ;
-  virtual void                  Print(std::ostream& os) const = 0;
+  virtual QString          Name() const  = 0;
+  virtual QMetaType::Type  Type() const  = 0;
+  virtual QVariant         Get()  const  = 0;
+  virtual void             Set(QVariant) = 0 ;
 
   virtual ~IProperty() = default;
-
-  // Note: Adding Non virtual methods does not causes break the base class ABI
-  // or binary compatibility with derived classes (fragile-base class problem).
-  template<typename T>
-  T Get() const {
-       if(this->Type() != typeid(T)) throw std::bad_cast();
-       return static_cast<TProperty<T> const*>(this)->Get();
-  }
-
-  template<typename T>
-  void Set(T const& value) {
-       if(this->Type() != typeid(T)) throw std::bad_cast();
-       static_cast<TProperty<T>*>(this)->Set(value);
-  }
-
-  template<typename T>
-  TProperty<T>& As()
-  {
-       if(this->Type() != typeid(T)) throw std::bad_cast();
-       return *static_cast<TProperty<T>*>(this);
-  }
-
-  // Make class printable
-  friend std::ostream& operator<<(std::ostream& os, IProperty const& rhs)
-  {
-      rhs.Print(os);
-      return os;
-  }
 };
 
-/** Class that encapsulate get/set properties
- *  @tparam - Type default constructible, copiable and equality-comparable
- */
-
-template <typename T>
-class TProperty: public IProperty
+class PropertyValue: public IProperty
 {
-  using Action = std::function<void ()>;
-  QString                 m_name;
-  T                       m_value;
-  std::type_info const*   m_tinfo;
-  Action m_callback;
+    const QString          m_name;
+    const QMetaType::Type   m_type;
+    QVariant               m_value;
+    PropertyChangedHandler m_callback;
 public:
-  TProperty(QString name, T const& init = {}, Action callback = []{})
-          : m_name(std::move(name))
-          , m_value(init)
-          , m_tinfo(&typeid(T))
-          , m_callback(callback)
-  { }
 
-  ~TProperty() = default;
+    PropertyValue(QString                name,
+                  QVariant               value,
+                  PropertyChangedHandler callback):
+        m_name(name)
+      , m_type(static_cast<QMetaType::Type>(value.type()))
+      , m_value(value)
+      , m_callback(callback)
+    { }
 
-  QString Name() const
-  {
-       return m_name;
-  }
+    QString   Name() const { return m_name;  }
+    QMetaType::Type  Type() const  { return m_type; }
 
-  const std::type_info& Type() const
-  {
-       return *m_tinfo;
-  }
-
-  T Get() const
-  {
-       return m_value;
-  }
-
-  void Set(T const& value)
-  {
-       m_value = value;
-       m_callback();
-  }
-
-  void Print(std::ostream& os) const
-  {
-       os << m_value;
-  }
+    QVariant  Get()  const
+    {
+        return m_value;
+    }
+    void Set(QVariant value)
+    {
+        m_value  = value;
+        m_callback(m_name);
+    }
 };
+
+using FGetter = std::function<QVariant ()>;
+using FSetter = std::function<void (QVariant )>;
+
+
+class PropertyComputed: public IProperty
+{
+public:
+    PropertyComputed(QString name,
+                     QMetaType::Type type,
+                     FGetter getter,
+                     FSetter setter
+                     )
+        : m_name(name), m_type(type), m_getter(getter), m_setter(setter)
+    {
+    }
+
+    QString   Name() const  { return m_name;  }
+
+    QMetaType::Type Type() const  { return m_type; }
+
+    QVariant  Get()  const
+    {
+        return m_getter();
+    }
+    void Set(QVariant value)
+    {
+        m_setter(value);
+    }
+private:
+    const QString   m_name;
+    const QMetaType::Type m_type;
+    FGetter m_getter;
+    FSetter m_setter;
+};
+
 
 
 class InotifyPropertyChanged
@@ -179,18 +171,55 @@ public:
         return it->second.get();
     }
 
+    QVariant GetProperty(QString name)
+    {
+        auto it = pmap.find(name);
+        if(it == pmap.end())
+            return QVariant();
+        return it->second->Get();
+    }
+
+    void SetProperty(QString name, QVariant value)
+    {
+        auto it = pmap.find(name);
+        if(it == pmap.end())
+            return;
+        return it->second->Set(value);
+    }
+
+
 protected:
     PropertyMap pmap;
 
-    template<typename T>
-    TProperty<T>* AddProperty(QString name, T const& init)
+    IProperty* AddPropertyValue(QString name, QVariant value)
     {
-        auto callback = [=]{ this->NotifyObservers(name);  };
-        auto ptr = std::make_unique<TProperty<T>>(name, init, callback);
-        TProperty<T>* addr = ptr.get();
+        auto callback = [&](QString name){
+            NotifyObservers(name);
+        };
+        auto ptr = std::make_unique<PropertyValue>(name, value, callback);
+        IProperty* p = ptr.get();
+        this->pmap[name] = std::move(ptr);
+        return p;
+    }
+
+    // Add Computed property
+    IProperty* AddProperty(QString name,
+                           QVariant::Type type,
+                           FGetter getter,
+                           FSetter setter)
+    {
+        auto ptr = std::make_unique<PropertyComputed>(
+                    name,
+                    static_cast<QMetaType::Type>(type),
+                    getter,
+                    setter
+                    );
+        auto addr = ptr.get();
         this->pmap[name] = std::move(ptr);
         return addr;
     }
+
+
 private:
     std::vector<PropertyChangedHandler> observers{};
 };
@@ -198,21 +227,22 @@ private:
 
 class BLSFormula2: public PropertyChangedObserver
 {
-    using TProperty_ptr = TProperty<double>*;
-    TProperty_ptr m_K, m_S, m_T, m_sigma, m_r;
-    double d1, d2, Vcall, Vput;
+    using IProperty_p = IProperty*;
+    IProperty_p m_K, m_S, m_T, m_sigma, m_r;
+    double m_d1, m_d2, m_Vcall, m_Vput;
 public:
 
     BLSFormula2()
     {
-        m_K     = this->AddProperty<double>("K", 0.0);
-        m_S     = this->AddProperty<double>("S", 0.0);
-        m_T     = this->AddProperty<double>("T", 0.0);
-        m_sigma = this->AddProperty<double>("sigma", 0.0);
-        m_r     = this->AddProperty<double>("r", 0.0);
-
-        this->Subscribe([=](QString name){ this->Recalculate(); });
+        m_K = AddPropertyValue("K", 50.0);
+        m_S = AddPropertyValue("S", 50.0);
+        m_T = AddPropertyValue("T", 0.5);
+        m_r = AddPropertyValue("sigma", 0.30);
+        m_r = AddPropertyValue("r", 0.05);
     }
+
+
+#if 1
     IProperty* K()     { return m_K; }
     IProperty* S()     { return m_S; }
     IProperty* T()     { return m_T; }
@@ -221,18 +251,18 @@ public:
 
     void Recalculate()
     {
-        double K = m_K->Get();
-        double S = m_S->Get();
-        double T = m_K->Get();
-        double sigma = m_sigma->Get();
-        double r = m_r->Get();
+        double K     = m_K->Get().toDouble();
+        double S     = m_S->Get().toDouble();
+        double T     = m_K->Get().toDouble();
+        double sigma = m_sigma->Get().toDouble();
+        double r     = m_r->Get().toDouble();
 
         int a = 1;
         double q = 0.0;
         double b   = r;
 
-        d1 = (log(S/K) + (b + sigma * sigma / 2.0) * T) / (sigma * sqrt(T));
-        d2 = d1 - sigma * std::sqrt(T);
+        double d1 = (log(S/K) + (b + sigma * sigma / 2.0) * T) / (sigma * sqrt(T));
+        double d2 = d1 - sigma * std::sqrt(T);
         // Helper parameter
         double exp_brt = std::exp((b - r) * T);
         double exp_rt = std::exp(-r * T);
@@ -240,19 +270,19 @@ public:
 
         a = 1;
         // European option price at t = 0
-        Vcall = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
+        m_Vcall = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
 
         a = -1;
-        Vput = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
+        m_Vput = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
+
+        m_d1 = d1;
+        m_d2 = d2;
     }
+
+#endif
 
 };
 
-
-    }
-
-
-};
 
 /**
  *   Source (Often an observable Object)
@@ -323,6 +353,7 @@ int main(int argc, char** argv)
     QLabel* labelVcall = new QLabel("0.0");
     form->addRow("Vcall - Call Option Price = ", labelVcall);
 
+#if 2
     BLSFormula2 bls;
     bls.K()->Set(50.0);
     bls.S()->Set(50.0);
@@ -340,9 +371,9 @@ int main(int argc, char** argv)
     bls.Subscribe([&](QString name)
     {
         if(name == "K")
-            entryK1->setText(QString::number(bls.property("K")->Get<double>()));
+            entryK1->setText(QString::number(bls.GetProperty("K").toDouble()));
     });
-
+#endif
 
     // Observable object
     //BLSFormula obs;
