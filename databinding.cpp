@@ -131,10 +131,12 @@ public:
 //    InotifyPropertyChanged(InotifyPropertyChanged const&) = delete;
 //    InotifyPropertyChanged& operator=(InotifyPropertyChanged const&) = delete;
 
-    virtual void Subscribe(PropertyChangedHandler hnd) = 0;
-    virtual void NotifyObservers(QString propertyName) = 0;
-    virtual void Clear() = 0;
-    virtual size_t Count() const = 0;
+    virtual void     Subscribe(PropertyChangedHandler hnd) = 0;
+    virtual void     NotifyObservers(QString propertyName) = 0;
+    virtual void     Clear() = 0;
+    virtual size_t   Count() const = 0;
+    virtual QVariant GetProperty(QString name) = 0;
+    virtual void     SetProperty(QString name, QVariant value) = 0;
 };
 
 class PropertyChangedObserver: public InotifyPropertyChanged
