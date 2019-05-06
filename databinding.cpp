@@ -249,76 +249,9 @@ public:
 };
 
 
-class BLSFormula: public PropertyChangedObserver
-{
-public:
-    double K = 50.0, S = 50.0, T = 0.5, sigma = 0.30, r = 0.05;
-    double Vcall, Vput, d1, d2;
-
-    BLSFormula()
-    {
-        this->Recalculate();
     }
 
-    void SetK(double value)
-    {
-        K = value;
-        this->Recalculate();
-        this->NotifyObservers("K");
-    }
-    void SetS(double value)
-    {
-        if(value == S) return;
-        S = value;
-        this->Recalculate();
-        this->NotifyObservers("S");
-    }
-    void SetT(double value)
-    {
-        if(value == T) return;
-        T = value;
-        this->Recalculate();
-        this->NotifyObservers("T");
-    }
-    void SetSigma(double value)
-    {
-        sigma = value;
-        this->Recalculate();
-        this->NotifyObservers("sigma");
-    }
-    void SetR(double value)
-    {
-        if(r == value) return;
-        r =  value;
-        this->Recalculate();
-        this->NotifyObservers("R");
-    }
 
-    double GetD1()    const { return d1; }
-    double GetD2()    const { return d2; }
-    double GetVcall() const { return Vcall; }
-    double GetVput()  const { return Vput; }
-
-    void Recalculate()
-    {
-        int a = 1;
-        double q = 0.0;
-        double b   = r;
-
-        d1 = (log(S/K) + (b + sigma * sigma / 2.0) * T) / (sigma * sqrt(T));
-        d2 = d1 - sigma * std::sqrt(T);
-        // Helper parameter
-        double exp_brt = std::exp((b - r) * T);
-        double exp_rt = std::exp(-r * T);
-        double sqrt_T  = sqrt(T);
-
-        a = 1;
-        // European option price at t = 0
-        Vcall = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
-
-        a = -1;
-        Vput = a * S * exp_brt * normal_cdf(a * d1) - a * K * exp_rt * normal_cdf(a * d2);
-    }
 };
 
 /**
