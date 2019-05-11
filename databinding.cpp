@@ -227,14 +227,14 @@ private:
 };
 
 
-class BLSFormula2: public PropertyChangedObserver
+class BLSFormula: public PropertyChangedObserver
 {
     using IProperty_p = IProperty*;
     IProperty_p m_K, m_S, m_T, m_sigma, m_r;
     double m_d1, m_d2, m_Vcall, m_Vput;
 public:
 
-    BLSFormula2()
+    BLSFormula()
     {
         m_K     = AddPropertyValue("K",    50.00);
         m_S     = AddPropertyValue("S",    50.00);
@@ -433,7 +433,26 @@ int main(int argc, char** argv)
     QLabel* labelVcall = new QLabel("0.0");
     form->addRow("Vcall - Call Option Price = ", labelVcall);
 
-    BLSFormula2 bls;
+    QSlider* sliderK1 = new QSlider();
+    sliderK1->setMaximum(100);
+    sliderK1->setMinimum(0);
+    sliderK1->setOrientation(Qt::Horizontal);
+    form->addRow(sliderK1);
+
+
+    BLSFormula bls;
+
+    QObject::connect(sliderK1, &QSlider::sliderReleased, [&]{
+         std::cout << " Slider value = " << sliderK1->value()
+                   << std::endl;
+         bls.SetProperty("K", sliderK1->value());
+    });
+
+    bls.Subscribe([&](QString name){
+        if(name == "K")
+            sliderK1->setValue((int) bls.GetProperty("K1").toDouble());
+    });
+
 
     Binding b_K = Binding{&bls, "K", BindingMode::TwoWays};
     SetBinding2W(b_K, entryK1, "text"
@@ -448,5 +467,7 @@ int main(int argc, char** argv)
     Binding b_Vcall = {&bls, "Vcall", BindingMode::OneWay};
     SetBinding1W(b_Vcall, labelVcall, "text");
 
-   return app.exec();
+    std::cout << " [INFO] Application Running " << std::endl;
+
+    return app.exec();
 }
